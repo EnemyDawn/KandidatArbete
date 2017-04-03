@@ -16,7 +16,7 @@ namespace BoidTest
         Texture2D fishTex;
         Rectangle rec;
 
-        float speed = 3.0f;
+        float speed = 1.0f;
         float size = 0.4f;
         float keepDistance = 80;
         float visibalDistance = 100;
@@ -42,25 +42,30 @@ namespace BoidTest
 
         public void Update(List<Boid> boids)
         {
-
             Vector2 newAveragePosition = pos;
             int boidsInVisibalDistance = 1;
 
+            Vector2 averageDirection = new Vector2(0.0f, 0.0f);
+
             for (int n = 0;n< boids.Count;n++)
             {
+                //Separation
                Vector2 boidVec = (boids[n].pos - pos);
                if (boidVec.Length() < keepDistance && boids[n] != this)
                 {
                     boidVec = ((boidVec.Length() / keepDistance)-1) * (boidVec / boidVec.Length());
-
-                    //boidVec.Normalize();
-
                     dir += boidVec;// * cordilate;
-                }
 
-               if(boidVec.Length() < visibalDistance && boids[n] != this)
+                    
+                }
+               
+               //Cohation
+               if((boidVec.Length() < visibalDistance)  && boids[n] != this)
                 {
                     newAveragePosition += boids[n].pos;
+                    averageDirection += boids[n].dir;
+
+
                     boidsInVisibalDistance++;
                 }
             }
@@ -73,6 +78,13 @@ namespace BoidTest
                 dir += dirToCenter / dirToCenter.Length();
                 //dirToCenter.Normalize();
 
+            }
+
+            if(averageDirection != dir)
+            {
+                averageDirection /= boidsInVisibalDistance;
+
+                dir += averageDirection;
             }
            
 
