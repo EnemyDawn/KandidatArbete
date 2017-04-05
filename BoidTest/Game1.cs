@@ -38,11 +38,14 @@ namespace BoidTest
             this.boids = new List<Boid>();
             this.feed = new List<Feed>();
 
-            Vector2 middle = new Vector2((windowSize.X / 2), (windowSize.Y / 2));
-            this.feed.Add(new Feed(Content, middle));
-                
+            Vector2 feed1 = new Vector2(200.0f, 200.0f);
+            Vector2 feed2 = new Vector2(200.0f, 400.0f);
 
-            for(int n = 0;n< 20;n++)
+            this.feed.Add(new Feed(Content, feed1));
+            this.feed.Add(new Feed(Content, feed2));
+
+
+            for (int n = 0;n< 20;n++)
                 boids.Add(new Boid(Content,windowSize, randum));
 
 

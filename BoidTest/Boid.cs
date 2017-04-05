@@ -47,34 +47,25 @@ namespace BoidTest
 
             for (int n = 0;n< boids.Count;n++)
             {
-               Vector2 boidVec = (boids[n].pos - pos);
-               if (boidVec.Length() < keepDistance && boids[n] != this)
+               if (boids[n] != this)
                 {
-                    //Separation, the closer to a flockmate, the more they are repelled
-                    boidVec = ((boidVec.Length() / keepDistance)-1) * (boidVec / boidVec.Length());
-                    dir += boidVec;// * cordilate;
-                }
-
-               //following a feed
-               for(int i = 0; i < feeds.Count; i++)
-                {
-                    Vector2 FoodVec = feeds[i].GetPos() - this.pos;
-
-                    if(FoodVec.Length() < visibalDistance)
+                    Vector2 boidVec = (boids[n].pos - pos);
+                    if (boidVec.Length() < keepDistance)
                     {
-                        FoodVec /= FoodVec.Length();
-                        this.dir += FoodVec;
+                        //Separation, the closer to a flockmate, the more they are repelled
+                        boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+                        dir += boidVec;// * cordilate;
                     }
 
-                }
-               
-               if((boidVec.Length() < visibalDistance)  && boids[n] != this)
-                {
-                    //calculate avg data for Alignment and Cohation
-                    newAveragePosition += boids[n].pos;
-                    averageDirection += boids[n].dir;
 
-                    boidsInVisibalDistance++;
+                    if ((boidVec.Length() < visibalDistance))
+                    {
+                        //calculate avg data for Alignment and Cohation
+                        newAveragePosition += boids[n].pos;
+                        averageDirection += boids[n].dir;
+
+                        boidsInVisibalDistance++;
+                    }
                 }
             }
 
@@ -94,6 +85,8 @@ namespace BoidTest
 
                 dir += averageDirection;
             }
+
+            this.FollowingFeed(feeds);
 
             dir.Normalize();
             pos +=(dir * speed);
@@ -127,6 +120,26 @@ namespace BoidTest
                 size,
                 SpriteEffects.None,1
                 );
+        }
+
+        private void FollowingFeed(List<Feed> feeds)
+        {
+            //following a feed
+            for (int i = 0; i < feeds.Count; i++)
+            {
+                Vector2 FoodVec = feeds[i].GetPos() - this.pos;
+
+                if (FoodVec.Length() < visibalDistance)
+                {
+                    if(FoodVec.Length() > 0.1)
+                    {
+                        FoodVec /= FoodVec.Length();
+                        this.dir += FoodVec;
+                    }
+
+                }
+
+            }
         }
     }
 }
