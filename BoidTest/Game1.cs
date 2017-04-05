@@ -19,6 +19,7 @@ namespace BoidTest
         SpriteBatch spriteBatch;
 
         List<Boid> boids;
+        List<Feed> feed;
 
         Vector2 windowSize = new Vector2(600,600);
 
@@ -34,7 +35,12 @@ namespace BoidTest
         {
             // TODO: Add your initialization logic here
             Random randum = new Random();
-            boids = new List<Boid>();
+            this.boids = new List<Boid>();
+            this.feed = new List<Feed>();
+
+            Vector2 middle = new Vector2((windowSize.X / 2), (windowSize.Y / 2));
+            this.feed.Add(new Feed(Content, middle));
+                
 
             for(int n = 0;n< 20;n++)
                 boids.Add(new Boid(Content,windowSize, randum));
@@ -62,12 +68,15 @@ namespace BoidTest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-           for(int n = 0;n<boids.Count;n++)
-            {
-                boids[n].Update(boids);
-            }
-
             // TODO: Add your update logic here
+
+            for (int i = 0; i < feed.Count; i++)
+                this.feed[i].Update();
+
+            for(int n = 0;n<boids.Count;n++)
+             {
+                 boids[n].Update(boids, feed);
+             }
 
             base.Update(gameTime);
         }
@@ -81,10 +90,16 @@ namespace BoidTest
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
 
+            for (int i = 0; i < feed.Count; i++)
+                this.feed[i].Draw(spriteBatch);
+
             for (int n = 0; n < boids.Count; n++)
             {
                 boids[n].Draw(spriteBatch);
             }
+
+            
+
             spriteBatch.End();
 
             base.Draw(gameTime);

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
 namespace BoidTest
 {
     public class Boid
@@ -34,11 +35,11 @@ namespace BoidTest
             pos = new Vector2(randum.Next(0, (int)windowSize.X),randum.Next(0, (int)windowSize.Y));
 
             fishTex = content.Load<Texture2D>("Arrow");
-            //rec = new Rectangle(40, 40, (int)(fishTex.Width * size), (int)(fishTex.Height * size));
-                
+
+
         }
 
-        public void Update(List<Boid> boids)
+        public void Update(List<Boid> boids, List<Feed> feeds)
         {
             Vector2 newAveragePosition = pos;
             Vector2 averageDirection = new Vector2(0.0f, 0.0f);
@@ -52,6 +53,19 @@ namespace BoidTest
                     //Separation, the closer to a flockmate, the more they are repelled
                     boidVec = ((boidVec.Length() / keepDistance)-1) * (boidVec / boidVec.Length());
                     dir += boidVec;// * cordilate;
+                }
+
+               //following a feed
+               for(int i = 0; i < feeds.Count; i++)
+                {
+                    Vector2 FoodVec = feeds[i].GetPos() - this.pos;
+
+                    if(FoodVec.Length() < visibalDistance)
+                    {
+                        FoodVec /= FoodVec.Length();
+                        this.dir += FoodVec;
+                    }
+
                 }
                
                if((boidVec.Length() < visibalDistance)  && boids[n] != this)
