@@ -14,7 +14,6 @@ namespace BoidTest
     public class Boid
     {
         Texture2D fishTex;
-        Rectangle rec;
 
         float speed = 1.0f;
         float size = 0.4f;
@@ -30,67 +29,59 @@ namespace BoidTest
         {
             this.windowSize = windowSize;
 
-            
+            //apply random postitions in the game
             dir = new Vector2(randum.Next(-100, 100), randum.Next(-100, 100));
-
             pos = new Vector2(randum.Next(0, (int)windowSize.X),randum.Next(0, (int)windowSize.Y));
 
             fishTex = content.Load<Texture2D>("Arrow");
-           // rec = new Rectangle(40, 40, (int)(fishTex.Width * size), (int)(fishTex.Height * size));
+            //rec = new Rectangle(40, 40, (int)(fishTex.Width * size), (int)(fishTex.Height * size));
                 
         }
 
         public void Update(List<Boid> boids)
         {
             Vector2 newAveragePosition = pos;
-            int boidsInVisibalDistance = 1;
-
             Vector2 averageDirection = new Vector2(0.0f, 0.0f);
+            int boidsInVisibalDistance = 1;
 
             for (int n = 0;n< boids.Count;n++)
             {
-                //Separation
                Vector2 boidVec = (boids[n].pos - pos);
                if (boidVec.Length() < keepDistance && boids[n] != this)
                 {
+                    //Separation, the closer to a flockmate, the more they are repelled
                     boidVec = ((boidVec.Length() / keepDistance)-1) * (boidVec / boidVec.Length());
                     dir += boidVec;// * cordilate;
-
-                    
                 }
                
-               //Cohation
                if((boidVec.Length() < visibalDistance)  && boids[n] != this)
                 {
+                    //calculate avg data for Alignment and Cohation
                     newAveragePosition += boids[n].pos;
                     averageDirection += boids[n].dir;
-
 
                     boidsInVisibalDistance++;
                 }
             }
 
+            //Adjust boid to follow the flocks average position, cohation 
             if(newAveragePosition != pos)
             {
                 newAveragePosition /= boidsInVisibalDistance;
                 Vector2 dirToCenter = newAveragePosition - pos;
 
                 dir += dirToCenter / dirToCenter.Length();
-                //dirToCenter.Normalize();
-
             }
 
+            //Adjust the moving direction according to the flocks average direction, Alignment
             if(averageDirection != dir)
             {
                 averageDirection /= boidsInVisibalDistance;
 
                 dir += averageDirection;
             }
-           
 
-
-
-                dir.Normalize();
+            dir.Normalize();
             pos +=(dir * speed);
 
             if(pos.X > windowSize.X + (fishTex.Width * size) )
