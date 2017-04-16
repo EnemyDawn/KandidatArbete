@@ -4,8 +4,9 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Sebastian/Documents/GitHub/KandidatArbete/BoidTest/Content/fine.png</File>
-    <File>C:/Users/Sebastian/Documents/GitHub/KandidatArbete/BoidTest/Content/fish.png</File>
-    <File>C:/Users/Sebastian/Documents/GitHub/KandidatArbete/BoidTest/Content/Arrow.png</File>
+    <File>C:/Users/MaxL/Documents/Visual Studio 2015/Projects/KandidatArbete/KandidatArbete/BoidTest/Content/fine.png</File>
+    <File>C:/Users/MaxL/Documents/Visual Studio 2015/Projects/KandidatArbete/KandidatArbete/BoidTest/Content/fish.png</File>
+    <File>C:/Users/MaxL/Documents/Visual Studio 2015/Projects/KandidatArbete/KandidatArbete/BoidTest/Content/Arrow.png</File>
+    <File>C:/Users/MaxL/Documents/Visual Studio 2015/Projects/KandidatArbete/KandidatArbete/BoidTest/Content/Body.png</File>
   </SourceFiles>
 </SourceFileCollection>

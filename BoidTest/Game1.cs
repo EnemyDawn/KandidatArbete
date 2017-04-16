@@ -21,7 +21,7 @@ namespace BoidTest
         List<Boid> boids;
         List<Feed> feed;
 
-        Vector2 windowSize = new Vector2(600,600);
+        Vector2 windowSize = new Vector2(1920,1080);
 
         public Game1()
         {
@@ -45,7 +45,7 @@ namespace BoidTest
             this.feed.Add(new Feed(Content, feed2));
 
 
-            for (int n = 0;n< 20;n++)
+            for (int n = 0;n< 50;n++)
                 boids.Add(new Boid(Content,windowSize, randum));
 
 
@@ -78,7 +78,7 @@ namespace BoidTest
 
             for(int n = 0;n<boids.Count;n++)
              {
-                 boids[n].Update(boids, feed);
+                 boids[n].Update(boids, feed, gameTime);
              }
 
             base.Update(gameTime);
