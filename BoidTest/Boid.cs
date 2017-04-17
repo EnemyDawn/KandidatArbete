@@ -16,15 +16,16 @@ namespace BoidTest
     {
         Texture2D fishTex;
        
-        float speed = 180.0f;
-        float size = 0.1f;
+        float speed = 130.0f;
+        float size = 0.08f;
         float keepDistance = 80;
-        float visibalDistance = 100;
+        float visibalDistance = 50;
 
         Vector2[] pos;
         Vector2 dir;
 
         Vector2 windowSize;
+        Color color;
 
         public Boid(ContentManager content,Vector2 windowSize,Random randum)
         {
@@ -32,7 +33,7 @@ namespace BoidTest
 
             //apply random postitions in the game
             dir = new Vector2(randum.Next(-100, 100), randum.Next(-100, 100));
-            pos = new Vector2[20];
+            pos = new Vector2[25];
             pos[0] = new Vector2(randum.Next(0, (int)windowSize.X),randum.Next(0, (int)windowSize.Y));
             dir.Normalize();
             for (int n = 1; n < pos.Length; n++)
@@ -40,15 +41,18 @@ namespace BoidTest
                 pos[n] = pos[0] + (dir * (1 * n));
             }
 
+            color = new Color(randum.Next(150,255), randum.Next(150, 255), randum.Next(0, 60));
+
+            size = randum.Next(5, 10) * 0.01f;// 0.08f;
             fishTex = content.Load<Texture2D>("Body");
         }
 
-        public void Update(List<Boid> boids, List<Feed> feeds,GameTime gameTime)
+        public void Update(List<Boid> boids, List<Feed> feeds,GameTime gameTime,bool loopAround)
         {
             Vector2 lastPos = pos[0];
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
-            this.BoidsFirstRules(boids);
+            this.BoidsFirstRules(boids, loopAround);
 
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
@@ -80,7 +84,7 @@ namespace BoidTest
             {
                 tempSize += startValue;
 
-                spriteBatch.Draw(fishTex, pos[n], new Rectangle(0, 0, fishTex.Width, fishTex.Height), new Color(255 + (n * 2), 150 + (n * 2), 57),
+                spriteBatch.Draw(fishTex, pos[n], new Rectangle(0, 0, fishTex.Width, fishTex.Height), new Color(color.R + (n * 2), color.G + (n * 2), color.B + (n * 2)),
                     rotation,
                     new Vector2(fishTex.Width, (fishTex.Height / 2)),
                     tempSize,
@@ -89,32 +93,85 @@ namespace BoidTest
             }
         }
 
-        private void BoidsFirstRules(List<Boid> boids)
+        private void BoidsFirstRules(List<Boid> boids,bool loopAround)
         {
             Vector2 newAveragePosition = pos[0];
             Vector2 averageDirection = new Vector2(0.0f, 0.0f);
             int boidsInVisibalDistance = 1;
-
-            for (int n = 0; n < boids.Count; n++)
+            if (!loopAround)
             {
-                if (boids[n] != this)
+                for (int n = 0; n < boids.Count; n++)
                 {
-                    Vector2 boidVec = (boids[n].pos[0] - pos[0]);
-                    if (boidVec.Length() < keepDistance)
+                    if (boids[n] != this)
                     {
-                        //Separation, the closer to a flockmate, the more they are repelled
-                        boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
-                        dir += boidVec;// * cordilate;
+                        Vector2 boidVec = (boids[n].pos[0] - pos[0]);
+                        if (boidVec.Length() < keepDistance)
+                        {
+                            //Separation, the closer to a flockmate, the more they are repelled
+                            boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+                            dir += boidVec;// * cordilate;
+                        }
+
+
+                        if ((boidVec.Length() < visibalDistance))
+                        {
+                            //calculate avg data for Alignment and Cohation
+                            newAveragePosition += boids[n].pos[0];
+                            averageDirection += boids[n].dir;
+
+                            boidsInVisibalDistance++;
+                        }
                     }
-
-
-                    if ((boidVec.Length() < visibalDistance))
+                }
+            }
+            else
+            {
+                for (int n = 0; n < boids.Count; n++)
+                {
+                    if (boids[n] != this)
                     {
-                        //calculate avg data for Alignment and Cohation
-                        newAveragePosition += boids[n].pos[0];
-                        averageDirection += boids[n].dir;
+                        Vector2 vecToWindow = (boids[n].pos[0]);
+                        if(boids[n].pos[0].X < keepDistance) // Check X close to 0
+                        {
+                            vecToWindow.X = windowSize.X - (keepDistance - boids[n].pos[0].X);
+                        }
+                        else if ((windowSize.X - boids[n].pos[0].X) < keepDistance) // Check X close to Edge
+                        {
+                            vecToWindow.X = boids[n].pos[0].X % (windowSize.X - keepDistance);
+                        }
 
-                        boidsInVisibalDistance++;
+                        if (boids[n].pos[0].Y < keepDistance) // Check Y close to 0
+                        {
+                            vecToWindow.Y = windowSize.Y - (keepDistance - boids[n].pos[0].Y);
+                        }
+                        else if ((windowSize.Y - boids[n].pos[0].Y) < keepDistance) // Check Y close to Edge
+                        {
+                            vecToWindow.Y = boids[n].pos[0].Y % (windowSize.Y- keepDistance);
+                        }
+
+
+
+                        Vector2 boidVec = (vecToWindow - pos[0]);
+                        if (boidVec.Length() < keepDistance)
+                        {
+                            //Separation, the closer to a flockmate, the more they are repelled
+                            boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+                            dir += boidVec;// * cordilate;
+                        }
+                        else
+                        {
+
+                        }
+
+
+                        if ((boidVec.Length() < visibalDistance))
+                        {
+                            //calculate avg data for Alignment and Cohation
+                            newAveragePosition += boids[n].pos[0];
+                            averageDirection += boids[n].dir;
+
+                            boidsInVisibalDistance++;
+                        }
                     }
                 }
             }
@@ -159,22 +216,37 @@ namespace BoidTest
 
         private void ReinitializeBoidPosition()
         {
-            if (pos[0].X > windowSize.X + (fishTex.Width * size))
-            {
-                pos[0].X = 0;// -(fishTex.Width * size);
-            }
-            if (pos[0].Y > windowSize.Y + (fishTex.Height * size))
-            {
-                pos[0].Y = 0;// -(fishTex.Height * size);
-            }
             if (pos[0].X < -(fishTex.Width * size))
             {
                 pos[0].X = windowSize.X;// + (fishTex.Width * size);
+                
             }
-            if (pos[0].Y < -(fishTex.Height * size))
+            else if (pos[0].Y < -(fishTex.Height * size))
             {
-                pos[0].Y = windowSize.Y + (fishTex.Height * size);
+                pos[0].Y = windowSize.Y;// + (fishTex.Height * size);
             }
+            else
+            {
+                pos[0].X = pos[0].X % (windowSize.X + (fishTex.Width * size));
+                pos[0].Y = pos[0].Y % (windowSize.Y + (fishTex.Height * size));
+            }
+
+            //if (pos[0].X > windowSize.X + (fishTex.Width * size))
+            //{
+            //    pos[0].X = 0;// -(fishTex.Width * size);
+            //}
+            //if (pos[0].Y > windowSize.Y + (fishTex.Height * size))
+            //{
+            //    pos[0].Y = 0;// -(fishTex.Height * size);
+            //}
+            //
+            //{
+            //    pos[0].X = windowSize.X;// + (fishTex.Width * size);
+            //}
+            //if (pos[0].Y < -(fishTex.Height * size))
+            //{
+            //    pos[0].Y = windowSize.Y + (fishTex.Height * size);
+            //}
         }
     }
 }

@@ -35,12 +35,12 @@ namespace BoidTest
         {
             float rotation = (float)(Math.Atan2(dir.Y, dir.X));// / (2 * Math.PI));
 
-            spriteBatch.Draw(this.FeedTex, this.pos, new Rectangle(0, 0, this.FeedTex.Width, this.FeedTex.Height), Color.White,
-                rotation,
-                new Vector2(this.FeedTex.Width, (this.FeedTex.Height / 2)),
-                size,
-                SpriteEffects.None, 1
-                );
+        //    spriteBatch.Draw(this.FeedTex, this.pos, new Rectangle(0, 0, this.FeedTex.Width, this.FeedTex.Height), Color.White,
+        //        rotation,
+        //        new Vector2(this.FeedTex.Width, (this.FeedTex.Height / 2)),
+        //        size,
+        //        SpriteEffects.None, 1
+        //        );
         }
 
         public Vector2 GetPos()

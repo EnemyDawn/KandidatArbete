@@ -21,7 +21,9 @@ namespace BoidTest
         List<Boid> boids;
         List<Feed> feed;
 
-        Vector2 windowSize = new Vector2(1920,1080);
+        Vector2 windowSize = new Vector2(1920,720);
+
+        bool loopAround = false;
 
         public Game1()
         {
@@ -38,14 +40,11 @@ namespace BoidTest
             this.boids = new List<Boid>();
             this.feed = new List<Feed>();
 
-            Vector2 feed1 = new Vector2(200.0f, 200.0f);
-            Vector2 feed2 = new Vector2(200.0f, 400.0f);
-
-            this.feed.Add(new Feed(Content, feed1));
-            this.feed.Add(new Feed(Content, feed2));
+            // this.feed.Add(new Feed(Content, new Vector2(200.0f, 200.0f)));
+            // this.feed.Add(new Feed(Content, new Vector2(200.0f, 400.0f)));
 
 
-            for (int n = 0;n< 50;n++)
+            for (int n = 0;n< 500;n++)
                 boids.Add(new Boid(Content,windowSize, randum));
 
 
@@ -78,7 +77,7 @@ namespace BoidTest
 
             for(int n = 0;n<boids.Count;n++)
              {
-                 boids[n].Update(boids, feed, gameTime);
+                 boids[n].Update(boids, feed, gameTime, loopAround);
              }
 
             base.Update(gameTime);
@@ -90,7 +89,7 @@ namespace BoidTest
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
             for (int i = 0; i < feed.Count; i++)
