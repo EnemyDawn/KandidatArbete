@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoidTest", "BoidTest\BoidTest.csproj", "{A121FCF7-763A-4FB5-A318-847038E757D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3DBoids", "3DBoids\3DBoids.csproj", "{467A69C3-065E-4466-977D-5F9DA4FAA211}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A121FCF7-763A-4FB5-A318-847038E757D0}.Debug|x86.Build.0 = Debug|x86
 		{A121FCF7-763A-4FB5-A318-847038E757D0}.Release|x86.ActiveCfg = Release|x86
 		{A121FCF7-763A-4FB5-A318-847038E757D0}.Release|x86.Build.0 = Release|x86
+		{467A69C3-065E-4466-977D-5F9DA4FAA211}.Debug|x86.ActiveCfg = Debug|x86
+		{467A69C3-065E-4466-977D-5F9DA4FAA211}.Debug|x86.Build.0 = Debug|x86
+		{467A69C3-065E-4466-977D-5F9DA4FAA211}.Release|x86.ActiveCfg = Release|x86
+		{467A69C3-065E-4466-977D-5F9DA4FAA211}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

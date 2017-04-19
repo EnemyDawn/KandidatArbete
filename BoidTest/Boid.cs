@@ -16,10 +16,10 @@ namespace BoidTest
     {
         Texture2D fishTex;
        
-        float speed = 130.0f;
+        float speed =130.0f;
         float size = 0.08f;
         float keepDistance = 80;
-        float visibalDistance = 50;
+        float visibalDistance = 100;
 
         Vector2[] pos;
         Vector2 dir;
@@ -49,17 +49,16 @@ namespace BoidTest
 
         public void Update(List<Boid> boids, List<Feed> feeds,GameTime gameTime,bool loopAround)
         {
-            Vector2 lastPos = pos[0];
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
-            this.BoidsFirstRules(boids, loopAround);
+            this.BoidsFirstRules(boids, false);
 
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
            // this.FollowingFeed(feeds);
 
             //simple function that moves the boids back to the screen
-            this.ReinitializeBoidPosition();
+            this.ReinitializeBoidPosition(loopAround);
 
             //the direction should be normailized to maintain speed reliability
             dir.Normalize();
@@ -214,22 +213,24 @@ namespace BoidTest
             }
         }
 
-        private void ReinitializeBoidPosition()
+        private void ReinitializeBoidPosition(bool loopAround)
         {
-            if (pos[0].X < -(fishTex.Width * size))
+            if (loopAround)
             {
-                pos[0].X = windowSize.X;// + (fishTex.Width * size);
-                
-            }
-            else if (pos[0].Y < -(fishTex.Height * size))
-            {
-                pos[0].Y = windowSize.Y;// + (fishTex.Height * size);
-            }
-            else
-            {
-                pos[0].X = pos[0].X % (windowSize.X + (fishTex.Width * size));
-                pos[0].Y = pos[0].Y % (windowSize.Y + (fishTex.Height * size));
-            }
+                if (pos[0].X < -(fishTex.Width * size))
+                {
+                    pos[0].X = windowSize.X + (fishTex.Width * size);
+
+                }
+                else if (pos[0].Y < -(fishTex.Height * size))
+                {
+                    pos[0].Y = windowSize.Y + (fishTex.Height * size);
+                }
+                else
+                {
+                    pos[0].X = pos[0].X % (windowSize.X + (fishTex.Width * size));
+                    pos[0].Y = pos[0].Y % (windowSize.Y + (fishTex.Height * size));
+                }
 
             //if (pos[0].X > windowSize.X + (fishTex.Width * size))
             //{
@@ -239,14 +240,35 @@ namespace BoidTest
             //{
             //    pos[0].Y = 0;// -(fishTex.Height * size);
             //}
-            //
+            //if (pos[0].X < -(fishTex.Width * size))
             //{
-            //    pos[0].X = windowSize.X;// + (fishTex.Width * size);
+            //    pos[0].X = windowSize.X + (fishTex.Width * size);
             //}
             //if (pos[0].Y < -(fishTex.Height * size))
             //{
             //    pos[0].Y = windowSize.Y + (fishTex.Height * size);
             //}
+            }
+            else
+            {
+                ///This if for when we do not want to loop the fish tank, we simply tell the boids to bound of the edges
+                if (pos[0].X > windowSize.X + (fishTex.Width * size))
+                {
+                    dir = -dir;
+                }
+                if (pos[0].Y > windowSize.Y + (fishTex.Height * size))
+                {
+                    dir = -dir;
+                }
+                if (pos[0].X < -(fishTex.Width * size))
+                {
+                    dir = -dir;
+                }
+                if (pos[0].Y < -(fishTex.Height * size))
+                {
+                    dir = -dir;
+                }
+            }
         }
     }
 }
