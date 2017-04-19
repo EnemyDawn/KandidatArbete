@@ -20,6 +20,7 @@ namespace BoidTest
 
         List<Boid> boids;
         List<Feed> feed;
+        
 
         Vector2 windowSize = new Vector2(600,600);
 

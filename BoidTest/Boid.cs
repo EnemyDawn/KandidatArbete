@@ -136,6 +136,11 @@ namespace BoidTest
             }
         }
 
+        private void AvoidingObsacles(List<Boid> boids)
+        {
+
+        }
+
         private void ReinitializeBoidPosition()
         {
             if (pos.X > windowSize.X + (fishTex.Width * size))
