@@ -199,3 +199,4 @@ $RECYCLE.BIN/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+BoidTest/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
