@@ -1,9 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-
-using System.Collections.Generic;
 
 namespace _3DBoids
 {
@@ -15,15 +18,19 @@ namespace _3DBoids
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        _3dBoid boid;
-
+        List<_3dBoid> boids;
         Matrix projection;
         BasicEffect effect;
+
+        Vector2 windowSize = new Vector2(1920, 720);
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferWidth = (int)windowSize.X;
+            graphics.PreferredBackBufferHeight = (int)windowSize.Y;
         }
 
         /// <summary>
@@ -35,23 +42,23 @@ namespace _3DBoids
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            boid = new _3dBoid(Content, "store");
+            Random random = new Random();
+            boids = new List<_3dBoid>();
+
+            for (int n = 0; n < 3; n++)
+                boids.Add(new _3dBoid(Content, windowSize, random));
 
             effect = new BasicEffect(GraphicsDevice);
 
             projection = Matrix.CreatePerspectiveFieldOfView(
-               MathHelper.PiOver4,
-               GraphicsDevice.Viewport.AspectRatio,
-               0.3f,
-               1000.0f);
+                MathHelper.PiOver4,
+                GraphicsDevice.Viewport.AspectRatio,
+                0.3f,
+                10000.0f);
 
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -79,6 +86,12 @@ namespace _3DBoids
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+           
+
+            for (int n = 0; n < boids.Count; n++)
+            {
+                boids[n].Update(boids, gameTime, false);
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -95,7 +108,11 @@ namespace _3DBoids
             effect.Projection = projection;
 
             // TODO: Add your drawing code here
-            boid.Draw(GraphicsDevice, effect);
+            for (int n = 0; n < boids.Count; n++)
+            {
+                boids[n].Draw(GraphicsDevice, effect);
+            }
+
             base.Draw(gameTime);
         }
     }

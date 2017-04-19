@@ -123,57 +123,6 @@ namespace BoidTest
                     }
                 }
             }
-            else
-            {
-                for (int n = 0; n < boids.Count; n++)
-                {
-                    if (boids[n] != this)
-                    {
-                        Vector2 vecToWindow = (boids[n].pos[0]);
-                        if(boids[n].pos[0].X < keepDistance) // Check X close to 0
-                        {
-                            vecToWindow.X = windowSize.X - (keepDistance - boids[n].pos[0].X);
-                        }
-                        else if ((windowSize.X - boids[n].pos[0].X) < keepDistance) // Check X close to Edge
-                        {
-                            vecToWindow.X = boids[n].pos[0].X % (windowSize.X - keepDistance);
-                        }
-
-                        if (boids[n].pos[0].Y < keepDistance) // Check Y close to 0
-                        {
-                            vecToWindow.Y = windowSize.Y - (keepDistance - boids[n].pos[0].Y);
-                        }
-                        else if ((windowSize.Y - boids[n].pos[0].Y) < keepDistance) // Check Y close to Edge
-                        {
-                            vecToWindow.Y = boids[n].pos[0].Y % (windowSize.Y- keepDistance);
-                        }
-
-
-
-                        Vector2 boidVec = (vecToWindow - pos[0]);
-                        if (boidVec.Length() < keepDistance)
-                        {
-                            //Separation, the closer to a flockmate, the more they are repelled
-                            boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
-                            dir += boidVec;// * cordilate;
-                        }
-                        else
-                        {
-
-                        }
-
-
-                        if ((boidVec.Length() < visibalDistance))
-                        {
-                            //calculate avg data for Alignment and Cohation
-                            newAveragePosition += boids[n].pos[0];
-                            averageDirection += boids[n].dir;
-
-                            boidsInVisibalDistance++;
-                        }
-                    }
-                }
-            }
 
             //Adjust boid to follow the flocks average position, cohation 
             if (newAveragePosition != pos[0])
