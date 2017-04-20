@@ -16,10 +16,10 @@ namespace BoidTest
     {
         Texture2D fishTex;
        
-        float speed =130.0f;
+        float speed =300.0f;
         float size = 0.08f;
-        float keepDistance = 80;
-        float visibalDistance = 100;
+        float keepDistance = 100;
+        float visibalDistance = 140;
 
         Vector2[] pos;
         Vector2 dir;
@@ -32,22 +32,23 @@ namespace BoidTest
             this.windowSize = windowSize;
 
             //apply random postitions in the game
+            speed = randum.Next(90,190);
             dir = new Vector2(randum.Next(-100, 100), randum.Next(-100, 100));
-            pos = new Vector2[25];
+            pos = new Vector2[randum.Next(14,30)];
             pos[0] = new Vector2(randum.Next(0, (int)windowSize.X),randum.Next(0, (int)windowSize.Y));
             dir.Normalize();
             for (int n = 1; n < pos.Length; n++)
             {
-                pos[n] = pos[0] + (dir * (1 * n));
+                pos[n] = pos[0];// + (dir * (1 * n));
             }
 
-            color = new Color(randum.Next(150,255), randum.Next(150, 255), randum.Next(0, 60));
+            color =  new Color(randum.Next(150,160), randum.Next(150, 170), randum.Next(30, 40));
 
             size = randum.Next(5, 10) * 0.01f;// 0.08f;
             fishTex = content.Load<Texture2D>("Body");
         }
 
-        public void Update(List<Boid> boids, List<Feed> feeds,GameTime gameTime,bool loopAround)
+        public void Update(List<Boid> boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround)
         {
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
@@ -55,7 +56,10 @@ namespace BoidTest
 
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
-           // this.FollowingFeed(feeds);
+            //this.FollowingFeed(feeds);
+            this.avoidingObst(obst);
+
+
 
             //simple function that moves the boids back to the screen
             this.ReinitializeBoidPosition(loopAround);
@@ -68,7 +72,6 @@ namespace BoidTest
             {
                 pos[n] = pos[n-1];
             }
-
 
         }
 
@@ -162,6 +165,43 @@ namespace BoidTest
             }
         }
 
+        private void avoidingObst(List<Obst> obst)
+        {
+            for(int i = 0; i < obst.Count; i++)
+            {
+                Vector2 ObstVec = obst[i].GetPos() - this.pos[0];
+
+                float test = ObstVec.Length();
+                float test2 = obst[i].GetInfluenceRange();
+
+                if (ObstVec.Length() < obst[i].GetInfluenceRange())
+                {
+                    double First = ObstVec.LengthSquared();
+
+                    double Second = obst[i].GetInfluenceRange() / 2;
+                    Second = Math.Pow(Second, 2);
+
+                    First = First - Second;
+
+                    float CosA = (float)First / ObstVec.Length();
+
+                    //angle between the vectors
+                    float angle = Vector2.Dot(ObstVec, this.dir);
+
+                    if (Math.Abs(angle) < Math.Abs(CosA))
+                    {
+                        double cosAngle = Math.Cos(angle);
+                        Vector2 addVec = new Vector2(0, 0);
+
+                        float third = 1 - (ObstVec.Length() / obst[i].GetInfluenceRange());
+                        addVec = ObstVec / ObstVec.Length();
+                        this.dir -= 2*addVec;
+
+                    }
+                }
+            }
+        }
+
         private void ReinitializeBoidPosition(bool loopAround)
         {
             if (loopAround)
@@ -171,13 +211,13 @@ namespace BoidTest
                     pos[0].X = windowSize.X + (fishTex.Width * size);
 
                 }
-                else if (pos[0].Y < -(fishTex.Height * size))
+                else if (pos[0].Y < -(fishTex.Height * size) )
                 {
                     pos[0].Y = windowSize.Y + (fishTex.Height * size);
                 }
                 else
                 {
-                    pos[0].X = pos[0].X % (windowSize.X + (fishTex.Width * size));
+                    pos[0].X = pos[0].X % (windowSize.X + (fishTex.Width * size) );
                     pos[0].Y = pos[0].Y % (windowSize.Y + (fishTex.Height * size));
                 }
 

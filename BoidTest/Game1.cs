@@ -20,8 +20,11 @@ namespace BoidTest
 
         List<Boid> boids;
         List<Feed> feed;
+        List<Obst> obst;
 
         Vector2 windowSize = new Vector2(1920,720);
+        //Vector2 windowSize = new Vector2(200, 200);
+
 
         bool loopAround = false;
 
@@ -37,14 +40,18 @@ namespace BoidTest
         {
             // TODO: Add your initialization logic here
             Random randum = new Random();
+
             this.boids = new List<Boid>();
             this.feed = new List<Feed>();
+            this.obst = new List<Obst>();
 
-            // this.feed.Add(new Feed(Content, new Vector2(200.0f, 200.0f)));
-            // this.feed.Add(new Feed(Content, new Vector2(200.0f, 400.0f)));
+            //this.feed.Add(new Feed(Content, new Vector2(200.0f, 200.0f)));
+            //this.feed.Add(new Feed(Content, new Vector2(200.0f, 400.0f)));
+
+            this.obst.Add(new Obst(Content, new Vector2(100.0f, 100.0f)));
 
 
-            for (int n = 0;n< 500;n++)
+            for (int n = 0;n< 250;n++)
                 boids.Add(new Boid(Content,windowSize, randum));
 
 
@@ -75,9 +82,12 @@ namespace BoidTest
             for (int i = 0; i < feed.Count; i++)
                 this.feed[i].Update();
 
-            for(int n = 0;n<boids.Count;n++)
+            for (int i = 0; i < obst.Count; i++)
+                this.obst[i].Update();
+
+            for (int n = 0;n<boids.Count;n++)
              {
-                 boids[n].Update(boids, feed, gameTime, loopAround);
+                 boids[n].Update(this.boids, this.feed, this.obst, gameTime, loopAround);
              }
 
             base.Update(gameTime);
@@ -94,6 +104,9 @@ namespace BoidTest
 
             for (int i = 0; i < feed.Count; i++)
                 this.feed[i].Draw(spriteBatch);
+
+            for (int i = 0; i < this.obst.Count; i++)
+                this.obst[i].Draw(spriteBatch);
 
             for (int n = 0; n < boids.Count; n++)
             {
