@@ -199,3 +199,6 @@ $RECYCLE.BIN/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+BoidTest/Content/obj/Windows/Arrow.mgcontent
+BoidTest/Content/obj/Windows/fine.mgcontent
+BoidTest/Content/obj/Windows/fish.mgcontent
