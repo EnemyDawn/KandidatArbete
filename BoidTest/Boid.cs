@@ -16,10 +16,9 @@ namespace BoidTest
     {
         Texture2D fishTex;
        
-        float speed =300.0f;
+        float speed =100.0f;
         float size = 0.08f;
-        float keepDistance = 100;
-        float visibalDistance = 140;
+
 
         Vector2[] pos;
         Vector2 dir;
@@ -32,7 +31,7 @@ namespace BoidTest
             this.windowSize = windowSize;
 
             //apply random postitions in the game
-            speed = randum.Next(90,190);
+            //speed = speed//randum.Next(50,130);
             dir = new Vector2(randum.Next(-100, 100), randum.Next(-100, 100));
             pos = new Vector2[randum.Next(14,30)];
             pos[0] = new Vector2(randum.Next(0, (int)windowSize.X),randum.Next(0, (int)windowSize.Y));
@@ -42,17 +41,17 @@ namespace BoidTest
                 pos[n] = pos[0];// + (dir * (1 * n));
             }
 
-            color =  new Color(randum.Next(150,160), randum.Next(150, 170), randum.Next(30, 40));
+            color = new Color(randum.Next(150,255), randum.Next(150, 255), randum.Next(50, 60));
 
             size = randum.Next(5, 10) * 0.01f;// 0.08f;
             fishTex = content.Load<Texture2D>("Body");
         }
 
-        public void Update(List<Boid> boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround)
+        public void Update(List<Boid> boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround,float keepDistance,float viewDistance)
         {
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
-            this.BoidsFirstRules(boids, false);
+            this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
 
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
@@ -95,7 +94,7 @@ namespace BoidTest
             }
         }
 
-        private void BoidsFirstRules(List<Boid> boids,bool loopAround)
+        private void BoidsFirstRules(List<Boid> boids,bool loopAround,float keepDistance,float visibalDistance)
         {
             Vector2 newAveragePosition = pos[0];
             Vector2 averageDirection = new Vector2(0.0f, 0.0f);
@@ -107,45 +106,54 @@ namespace BoidTest
                     if (boids[n] != this)
                     {
                         Vector2 boidVec = (boids[n].pos[0] - pos[0]);
+                        bool dummy = false;
                         if (boidVec.Length() < keepDistance)
                         {
                             //Separation, the closer to a flockmate, the more they are repelled
                             boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
                             dir += boidVec;// * cordilate;
+                            dummy = true;
                         }
 
 
-                        if ((boidVec.Length() < visibalDistance))
+                        else if ((boidVec.Length() < visibalDistance))
                         {
                             //calculate avg data for Alignment and Cohation
                             newAveragePosition += boids[n].pos[0];
+
                             averageDirection += boids[n].dir;
 
                             boidsInVisibalDistance++;
+                           
                         }
                     }
                 }
             }
 
+
             //Adjust boid to follow the flocks average position, cohation 
-            if (newAveragePosition != pos[0])
+
+            if (boidsInVisibalDistance > 0)
             {
-                newAveragePosition /= boidsInVisibalDistance;
-                Vector2 dirToCenter = newAveragePosition - pos[0];
+                if (newAveragePosition != pos[0])
+                {
+                    newAveragePosition /= boidsInVisibalDistance;
+                    Vector2 dirToCenter = newAveragePosition - pos[0];
 
-                dir += dirToCenter / dirToCenter.Length();
-            }
+                    dir += dirToCenter / dirToCenter.Length();
+                }
 
-            //Adjust the moving direction according to the flocks average direction, Alignment
-            if (averageDirection != dir)
-            {
-                averageDirection /= boidsInVisibalDistance;
+                //Adjust the moving direction according to the flocks average direction, Alignment
+                if (averageDirection != dir)
+                {
+                    averageDirection /= boidsInVisibalDistance;
 
-                dir += averageDirection;
+                    dir += averageDirection;
+                }
             }
         }
 
-        private void FollowingFeed(List<Feed> feeds)
+        private void FollowingFeed(List<Feed> feeds,float visibalDistance)
         {
             //following a feed
             for (int i = 0; i < feeds.Count; i++)
@@ -170,9 +178,6 @@ namespace BoidTest
             for(int i = 0; i < obst.Count; i++)
             {
                 Vector2 ObstVec = obst[i].GetPos() - this.pos[0];
-
-                float test = ObstVec.Length();
-                float test2 = obst[i].GetInfluenceRange();
 
                 if (ObstVec.Length() < obst[i].GetInfluenceRange())
                 {
@@ -220,23 +225,6 @@ namespace BoidTest
                     pos[0].X = pos[0].X % (windowSize.X + (fishTex.Width * size) );
                     pos[0].Y = pos[0].Y % (windowSize.Y + (fishTex.Height * size));
                 }
-
-            //if (pos[0].X > windowSize.X + (fishTex.Width * size))
-            //{
-            //    pos[0].X = 0;// -(fishTex.Width * size);
-            //}
-            //if (pos[0].Y > windowSize.Y + (fishTex.Height * size))
-            //{
-            //    pos[0].Y = 0;// -(fishTex.Height * size);
-            //}
-            //if (pos[0].X < -(fishTex.Width * size))
-            //{
-            //    pos[0].X = windowSize.X + (fishTex.Width * size);
-            //}
-            //if (pos[0].Y < -(fishTex.Height * size))
-            //{
-            //    pos[0].Y = windowSize.Y + (fishTex.Height * size);
-            //}
             }
             else
             {
