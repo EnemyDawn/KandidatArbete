@@ -57,6 +57,7 @@ namespace BoidTest
             //to a point in the game, called a feed
             //this.FollowingFeed(feeds);
             this.avoidingObst(obst);
+            this.AvoidEnemyBoids(obst, viewDistance);
 
 
 
@@ -203,6 +204,40 @@ namespace BoidTest
                         this.dir -= 2*addVec;
 
                     }
+                }
+            }
+        }
+
+        private void AvoidEnemyBoids(List<Obst> obst, float viewDistance)
+        {
+            Vector2 v = new Vector2(0, 0);
+            for (int i = 0; i < obst.Count; i++)
+            {
+                Vector2 OtherVec = this.pos[0] - obst[i].GetPos();
+
+                if(OtherVec.Length() < viewDistance)
+                {
+                    float constant = (OtherVec.Length() / viewDistance) * -1.0f;
+                    v = OtherVec / OtherVec.Length();
+                    v = v * constant;
+
+                    float w = 1.0f;
+
+                    //float speedMod = viewDistance / OtherVec.Length();
+                    float speedMod = OtherVec.Length() / viewDistance;
+
+                    //speedMod = speedMod * 0.4f;
+
+
+                    this.speed = this.speed * (1+speedMod);
+                    if (250 < this.speed)
+                        this.speed = 250;
+
+                    this.dir +=  w*v;
+                }
+                else
+                {
+                    this.speed = 100;
                 }
             }
         }

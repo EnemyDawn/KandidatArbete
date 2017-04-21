@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/MaxL/Documents/Visual Studio 2015/Projects/KandidatArbete/KandidatArbete/BoidTest/Content/fine.png</SourceFile>
-  <SourceTime>2017-04-11T14:52:59.8673097+01:00</SourceTime>
-  <DestFile>C:/Users/MaxL/Documents/Visual Studio 2015/Projects/KandidatArbete/KandidatArbete/BoidTest/Content/bin/Windows/fine.xnb</DestFile>
-  <DestTime>2017-04-21T10:02:14.6913523+01:00</DestTime>
+  <SourceFile>C:/Users/Sebastian/Documents/GitHub/KandidatArbete/BoidTest/Content/fine.png</SourceFile>
+  <SourceTime>2017-03-30T15:26:43.6414121+02:00</SourceTime>
+  <DestFile>C:/Users/Sebastian/Documents/GitHub/KandidatArbete/BoidTest/Content/bin/Windows/fine.xnb</DestFile>
+  <DestTime>2017-04-21T15:34:37.3667709+02:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
