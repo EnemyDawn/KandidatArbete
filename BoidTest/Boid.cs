@@ -18,13 +18,16 @@ namespace BoidTest
        
         float speed =100.0f;
         float size = 0.08f;
+        float avoidDangerMag = 0;
 
 
         Vector2[] pos;
         Vector2 dir;
+        Vector2 avoidDanger;
 
         Vector2 windowSize;
         Color color;
+
 
         public Boid(ContentManager content,Vector2 windowSize,Random randum)
         {
@@ -45,6 +48,8 @@ namespace BoidTest
 
             size = randum.Next(5, 10) * 0.01f;// 0.08f;
             fishTex = content.Load<Texture2D>("Body");
+            this.avoidDanger = new Vector2(1, 0);
+          
         }
 
         public void Update(List<Boid> boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround,float keepDistance,float viewDistance)
@@ -56,7 +61,10 @@ namespace BoidTest
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
             //this.FollowingFeed(feeds);
-            this.avoidingObst(obst);
+            //this.avoidingObst(obst);
+            this.avoidingDanger(obst);
+
+
 
 
 
@@ -65,7 +73,18 @@ namespace BoidTest
 
             //the direction should be normailized to maintain speed reliability
             dir.Normalize();
-            pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float speedMagn = 1;
+
+
+            if (this.avoidDangerMag != 0)
+            {
+                //pos[0] -= (avoidDanger * (speed / (this.avoidDangerMag * 0.008f ))) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                this.dir -= (avoidDanger);
+                speedMagn = this.avoidDangerMag * 0.008f;
+            }
+
+            //pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            pos[0] += (dir * speed/speedMagn) * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             for (int n = pos.Length-1; n > 0; n--)
             {
@@ -98,6 +117,9 @@ namespace BoidTest
         {
             Vector2 newAveragePosition = pos[0];
             Vector2 averageDirection = new Vector2(0.0f, 0.0f);
+
+
+
             int boidsInVisibalDistance = 1;
             if (!loopAround)
             {
@@ -206,6 +228,48 @@ namespace BoidTest
                 }
             }
         }
+
+        private void avoidingDanger(List<Obst> obst)
+        {
+            for (int i = 0; i < obst.Count; i++)
+            {
+                Vector2 ObstVec = obst[i].GetPos() - this.pos[0];
+
+                if (ObstVec.Length() < obst[i].GetInfluenceRange())
+                {
+                    double First = ObstVec.LengthSquared();
+
+                    double Second = obst[i].GetInfluenceRange() / 2;
+                    Second = Math.Pow(Second, 2);
+
+                    First = First - Second;
+
+                    float CosA = (float)First / ObstVec.Length();
+
+                    //angle between the vectors
+                    float angle = Vector2.Dot(ObstVec, this.dir);
+
+                    if (Math.Abs(angle) < Math.Abs(CosA))
+                    {
+                        double cosAngle = Math.Cos(angle);
+                        Vector2 addVec = new Vector2(0, 0);
+
+                        float third = 1 - (ObstVec.Length() / obst[i].GetInfluenceRange());
+                        addVec = ObstVec / ObstVec.Length();
+                        this.avoidDanger = addVec;
+
+                        this.avoidDanger.Normalize();
+                        this.avoidDangerMag = ObstVec.Length();
+                    }
+                }
+                else
+                {
+                    this.avoidDangerMag = 0.0f;
+                }
+            }
+        }
+
+
 
         private void ReinitializeBoidPosition(bool loopAround)
         {

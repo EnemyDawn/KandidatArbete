@@ -23,7 +23,7 @@ namespace BoidTest
             this.FeedTex = content.Load<Texture2D>("fine");
             this.pos = pos;
 
-            influenceRadius = 400;
+            influenceRadius = 60;
            // Vector2 influenceRadius = new Vector2(this.FeedTex.Height / 2, this.FeedTex.Width / 2);
            // this.influenceRadius = influenceRadius.Length();
            // this.influenceRadius *= size * 5;
