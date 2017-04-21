@@ -223,11 +223,7 @@ namespace BoidTest
 
                     float w = 1.0f;
 
-                    //float speedMod = viewDistance / OtherVec.Length();
                     float speedMod = OtherVec.Length() / viewDistance;
-
-                    //speedMod = speedMod * 0.4f;
-
 
                     this.speed = this.speed * (1+speedMod);
                     if (250 < this.speed)
