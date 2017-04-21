@@ -91,7 +91,7 @@ namespace BoidTest
             sets = new VariableSet[]
             {
                 new VariableSet(100,140),
-                new VariableSet(44,20),
+                new VariableSet(44,74),
             };
 
 
