@@ -107,16 +107,12 @@ namespace BoidTest
                     if (boids[n] != this)
                     {
                         Vector2 boidVec = (boids[n].pos[0] - pos[0]);
-                        bool dummy = false;
                         if (boidVec.Length() < keepDistance)
                         {
                             //Separation, the closer to a flockmate, the more they are repelled
                             boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
                             dir += boidVec;// * cordilate;
-                            dummy = true;
                         }
-
-
                         else if ((boidVec.Length() < visibalDistance))
                         {
                             //calculate avg data for Alignment and Cohation
