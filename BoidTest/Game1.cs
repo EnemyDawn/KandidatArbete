@@ -78,20 +78,28 @@ namespace BoidTest
 
             this.font = Content.Load<BitmapFont>("BIG");
 
-            for (int n = 0; n < 200; n++)
+            for (int n = 0; n < 400; n++)
             {
                 boids.Add(new Boid(Content, windowSize, randum));
-
-                boids2.Add(new Boid(Content, windowSize, randum));
-
-                boids3.Add(new Boid(Content, windowSize, randum));
-                boids4.Add(new Boid(Content, windowSize, randum));
             }
 
             sets = new VariableSet[]
             {
-                new VariableSet(100,140),
-                new VariableSet(44,74),
+                new VariableSet(20,200),
+                new VariableSet(30,200),
+                new VariableSet(40,200),
+                new VariableSet(50,200),
+                new VariableSet(60,200),
+                new VariableSet(80,200),
+                new VariableSet(100,200),
+
+                new VariableSet(40,150),
+                new VariableSet(40,120),
+                new VariableSet(40,100),
+                new VariableSet(40,80),
+                new VariableSet(40,60),
+                new VariableSet(40,50),
+                new VariableSet(40,41),
             };
 
 
@@ -150,10 +158,8 @@ namespace BoidTest
 
             for (int n = 0;n<boids.Count;n++)
              {
-                 boids[n].Update(this.boids, this.feed, this.obst, gameTime, loopAround,keepDistance, visibalDistance);
-                boids2[n].Update(this.boids2, this.feed, this.obst, gameTime, loopAround, keepDistance, visibalDistance);
-                boids3[n].Update(this.boids2, this.feed, this.obst, gameTime, loopAround, keepDistance, visibalDistance);
-                boids4[n].Update(this.boids2, this.feed, this.obst, gameTime, loopAround, keepDistance, visibalDistance);
+               boids[n].Update(this.boids, this.feed, this.obst, gameTime, loopAround,keepDistance, visibalDistance);
+
             }
 
             lastState = Keyboard.GetState();
@@ -179,9 +185,7 @@ namespace BoidTest
             for (int n = 0; n < boids.Count; n++)
             {
                 boids[n].Draw(spriteBatch);
-                boids2[n].Draw(spriteBatch);
-                boids3[n].Draw(spriteBatch);
-                boids4[n].Draw(spriteBatch);
+
             }
 
             spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0,0),Color.White);
