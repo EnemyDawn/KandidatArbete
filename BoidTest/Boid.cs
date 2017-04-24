@@ -56,7 +56,7 @@ namespace BoidTest
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
             //this.FollowingFeed(feeds);
-            this.avoidingObst(obst);
+            //this.avoidingObst(obst);
             this.AvoidEnemyBoids(obst, viewDistance);
 
 
@@ -214,14 +214,13 @@ namespace BoidTest
             for (int i = 0; i < obst.Count; i++)
             {
                 Vector2 OtherVec = this.pos[0] - obst[i].GetPos();
-
                 if(OtherVec.Length() < viewDistance)
                 {
                     float constant = (OtherVec.Length() / viewDistance) * -1.0f;
                     v = OtherVec / OtherVec.Length();
                     v = v * constant;
 
-                    float w = 1.0f;
+                    float w = 2.0f;
 
                     float speedMod = OtherVec.Length() / viewDistance;
 
@@ -229,7 +228,7 @@ namespace BoidTest
                     if (250 < this.speed)
                         this.speed = 250;
 
-                    this.dir +=  w*v;
+                    this.dir -=  w*v;
                 }
                 else
                 {
