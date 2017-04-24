@@ -127,10 +127,10 @@ namespace BoidTest
 
             if (Keyboard.GetState().IsKeyDown(Keys.Y))
                 keepDistance--;
-            if (Keyboard.GetState().IsKeyDown(Keys.U))
+            if (Keyboard.GetState().IsKeyDown(Keys.U) && keepDistance < visibalDistance-10)
                 keepDistance++;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.H))
+            if (Keyboard.GetState().IsKeyDown(Keys.H) && keepDistance < visibalDistance - 10)
                 visibalDistance--;
             if (Keyboard.GetState().IsKeyDown(Keys.J))
                 visibalDistance++;
