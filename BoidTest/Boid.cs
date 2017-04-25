@@ -31,7 +31,7 @@ namespace BoidTest
             this.windowSize = windowSize;
 
             //apply random postitions in the game
-            //speed = speed//randum.Next(50,130);
+            //speed = randum.Next(50,130);
             dir = new Vector2(randum.Next(-100, 100), randum.Next(-100, 100));
             pos = new Vector2[randum.Next(14,30)];
             pos[0] = new Vector2(randum.Next(0, (int)windowSize.X),randum.Next(0, (int)windowSize.Y));
@@ -47,7 +47,7 @@ namespace BoidTest
             fishTex = content.Load<Texture2D>("Body");
         }
 
-        public void Update(List<Boid> boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround,float keepDistance,float viewDistance)
+        public void Update(Boid[] boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround,float keepDistance,float viewDistance)
         {
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
@@ -57,8 +57,7 @@ namespace BoidTest
             //to a point in the game, called a feed
             //this.FollowingFeed(feeds);
             //this.avoidingObst(obst);
-            this.AvoidEnemyBoids(obst, viewDistance);
-
+            this.AvoidEnemyBoids(obst);
 
 
             //simple function that moves the boids back to the screen
@@ -95,14 +94,14 @@ namespace BoidTest
             }
         }
 
-        private void BoidsFirstRules(List<Boid> boids,bool loopAround,float keepDistance,float visibalDistance)
+        private void BoidsFirstRules(Boid[] boids,bool loopAround,float keepDistance,float visibalDistance)
         {
             Vector2 newAveragePosition = pos[0];
             Vector2 averageDirection = new Vector2(0.0f, 0.0f);
             int boidsInVisibalDistance = 1;
             if (!loopAround)
             {
-                for (int n = 0; n < boids.Count; n++)
+                for (int n = 0; n < boids.Length; n++)
                 {
                     if (boids[n] != this)
                     {
@@ -204,21 +203,21 @@ namespace BoidTest
             }
         }
 
-        private void AvoidEnemyBoids(List<Obst> obst, float viewDistance)
+        private void AvoidEnemyBoids(List<Obst> obst)
         {
             Vector2 v = new Vector2(0, 0);
             for (int i = 0; i < obst.Count; i++)
             {
                 Vector2 OtherVec = this.pos[0] - obst[i].GetPos();
-                if(OtherVec.Length() < viewDistance)
+                if(OtherVec.Length() < obst[i].GetInfluenceRange())
                 {
-                    float constant = (OtherVec.Length() / viewDistance) * -1.0f;
+                    float constant = (OtherVec.Length() / obst[i].GetInfluenceRange()) * -1.0f;
                     v = OtherVec / OtherVec.Length();
                     v = v * constant;
 
                     float w = 2.0f;
 
-                    float speedMod = OtherVec.Length() / viewDistance;
+                    float speedMod = OtherVec.Length() / obst[i].GetInfluenceRange();
 
                     this.speed = this.speed * (1+speedMod);
                     if (250 < this.speed)

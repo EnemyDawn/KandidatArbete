@@ -23,29 +23,28 @@ namespace BoidTest
             this.visibalDistance = inVisiable;
         }
     }
+
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        List<Boid> boids;
+        int amountOfFish = 500;
+        Boid[] boids;
 
-        List<Boid> boids2;
-        List<Boid> boids3;
-        List<Boid> boids4;
         List<Feed> feed;
         List<Obst> obst;
 
         VariableSet[] sets;
         int currentSet=0;
 
-        Vector2 windowSize = new Vector2(1920,720);
+        Vector2 windowSize = new Vector2(900,900);
         //Vector2 windowSize = new Vector2(200, 200);
 
         BitmapFont font;
         bool loopAround = false;
 
-        public float keepDistance = 100;
+        public float keepDistance = 50;
         public float visibalDistance = 140;
 
         KeyboardState lastState;
@@ -62,11 +61,7 @@ namespace BoidTest
             // TODO: Add your initialization logic here
             Random randum = new Random();
 
-            this.boids = new List<Boid>();
-            this.boids2 = new List<Boid>();
-
-            this.boids3 = new List<Boid>();
-            this.boids4 = new List<Boid>();
+            boids = new Boid[amountOfFish];
 
             this.feed = new List<Feed>();
             this.obst = new List<Obst>();
@@ -78,28 +73,29 @@ namespace BoidTest
 
             this.font = Content.Load<BitmapFont>("BIG");
 
-            for (int n = 0; n < 400; n++)
+            for (int n = 0; n < amountOfFish; n++)
             {
-                boids.Add(new Boid(Content, windowSize, randum));
+                boids[n] = new Boid(Content, windowSize, randum);
             }
 
             sets = new VariableSet[]
             {
-                new VariableSet(20,200),
-                new VariableSet(30,200),
-                new VariableSet(40,200),
-                new VariableSet(50,200),
-                new VariableSet(60,200),
-                new VariableSet(80,200),
-                new VariableSet(100,200),
+                //new VariableSet(20,200),
+                //new VariableSet(30,200),
+                //new VariableSet(40,200),
+                //new VariableSet(50,200),
+                //new VariableSet(60,200),
+                //new VariableSet(70,200),
+                //new VariableSet(80,200),
+                //new VariableSet(90,200),
+                //new VariableSet(100,200),
 
-                new VariableSet(40,150),
-                new VariableSet(40,120),
                 new VariableSet(40,100),
+                new VariableSet(40,90),
                 new VariableSet(40,80),
+                new VariableSet(40,70),
                 new VariableSet(40,60),
-                new VariableSet(40,50),
-                new VariableSet(40,41),
+                new VariableSet(40,52),
             };
 
 
@@ -113,7 +109,6 @@ namespace BoidTest
 
             // TODO: use this.Content to load your game content here
         }
-
 
         protected override void UnloadContent()
         {
@@ -156,7 +151,7 @@ namespace BoidTest
             for (int i = 0; i < obst.Count; i++)
                 this.obst[i].Update();
 
-            for (int n = 0;n<boids.Count;n++)
+            for (int n = 0;n<boids.Length;n++)
              {
                boids[n].Update(this.boids, this.feed, this.obst, gameTime, loopAround,keepDistance, visibalDistance);
 
@@ -166,10 +161,6 @@ namespace BoidTest
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
@@ -182,15 +173,15 @@ namespace BoidTest
                 this.obst[i].Draw(spriteBatch);
 
 
-            for (int n = 0; n < boids.Count; n++)
+            for (int n = 0; n < boids.Length; n++)
             {
                 boids[n].Draw(spriteBatch);
 
             }
 
-            spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0,0),Color.White);
-            spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-            spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+            //spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0,0),Color.White);
+            //spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+            //spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
             
             spriteBatch.End();
 
@@ -201,6 +192,7 @@ namespace BoidTest
         {
             keepDistance = sets[currentSet].keepDistance;
             visibalDistance = sets[currentSet].visibalDistance;
+            Console.WriteLine("Visiable" + sets[currentSet].visibalDistance);
         }
     }
 }

@@ -20,10 +20,10 @@ namespace BoidTest
 
         public Obst(ContentManager content, Vector2 pos)
         {
-            this.FeedTex = content.Load<Texture2D>("fine");
+            this.FeedTex = content.Load<Texture2D>("Body");
             this.pos = pos;
 
-            influenceRadius = 400;
+            influenceRadius = 80;
            // Vector2 influenceRadius = new Vector2(this.FeedTex.Height / 2, this.FeedTex.Width / 2);
            // this.influenceRadius = influenceRadius.Length();
            // this.influenceRadius *= size * 5;
@@ -41,9 +41,10 @@ namespace BoidTest
         {
 
 
-            spriteBatch.Draw(this.FeedTex, this.pos, new Rectangle(0, 0, this.FeedTex.Width, this.FeedTex.Height), Color.White,
+            spriteBatch.Draw(this.FeedTex, this.pos, new Rectangle(0, 0, this.FeedTex.Width, this.FeedTex.Height),
+                Color.Red,
                 0,
-                new Vector2(this.FeedTex.Width / 2, (this.FeedTex.Height / 2)),
+                new Vector2(0,0),
                 this.size,
                 SpriteEffects.None, 1
                 );
