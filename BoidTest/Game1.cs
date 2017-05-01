@@ -93,7 +93,7 @@ namespace BoidTest
 
             sets = new VariableSet[]
             {
-                //new VariableSet(20,200),
+                new VariableSet(20,200),
                 //new VariableSet(30,200),
                 //new VariableSet(40,200),
                 //new VariableSet(50,200),
@@ -103,12 +103,12 @@ namespace BoidTest
                 //new VariableSet(90,200),
                 //new VariableSet(100,200),
 
-                new VariableSet(40,100),
-                new VariableSet(40,90),
-                new VariableSet(40,80),
-                new VariableSet(40,70),
-                new VariableSet(40,60),
-                new VariableSet(40,52),
+                //new VariableSet(40,100),
+                //new VariableSet(40,90),
+                //new VariableSet(40,80),
+                //new VariableSet(40,70),
+                //new VariableSet(40,60),
+                //new VariableSet(40,52),
             };
 
 
@@ -209,9 +209,9 @@ namespace BoidTest
 
                 }
 
-                spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
-                spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-                spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+                //spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
+                //spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+                //spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
 
 
                 
@@ -220,7 +220,6 @@ namespace BoidTest
             else if (testPart == TestPart.intro)
             {
                 spriteBatch.DrawString(font, "Text that explains he what this test \nis for", new Vector2(0, 0), Color.White);
-
             }
 
             spriteBatch.End();

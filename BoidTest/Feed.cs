@@ -13,7 +13,7 @@ namespace BoidTest
     public class Feed
     {
         Texture2D FeedTex;
-        float size = 0.1f;
+        float size = 0.3f;
         Vector2 pos;
         Vector2 dir;
 
@@ -24,7 +24,7 @@ namespace BoidTest
 
         public Feed(ContentManager content, Vector2 pos)
         {
-            this.FeedTex = content.Load<Texture2D>("fine");
+            this.FeedTex = content.Load<Texture2D>("bread");
             this.pos = pos;
             this.dir = new Vector2(1.0f, 0.0f);
         }
