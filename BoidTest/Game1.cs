@@ -114,7 +114,7 @@ namespace BoidTest
 
             sets = new VariableSet[]
             {
-                //new VariableSet(20,200),
+                new VariableSet(20,200),
                 //new VariableSet(30,200),
                 //new VariableSet(40,200),
                 //new VariableSet(50,200),
@@ -124,12 +124,12 @@ namespace BoidTest
                 //new VariableSet(90,200),
                 //new VariableSet(100,200),
 
-                new VariableSet(40,100),
-                new VariableSet(40,90),
-                new VariableSet(40,80),
-                new VariableSet(40,70),
-                new VariableSet(40,60),
-                new VariableSet(40,52),
+                //new VariableSet(40,100),
+                //new VariableSet(40,90),
+                //new VariableSet(40,80),
+                //new VariableSet(40,70),
+                //new VariableSet(40,60),
+                //new VariableSet(40,52),
             };
 
             introText = "In this case study we study the boid algorithm and try to make is as \nrealistic as possible."+
@@ -353,9 +353,9 @@ namespace BoidTest
                     boids[n].Draw(spriteBatch);
                 }
 
-                spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
-                spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-                spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+                //spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
+                //spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+                //spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
 
 
                 
@@ -393,7 +393,6 @@ namespace BoidTest
             else if (testPart == TestPart.Seperation100)
             {
                 spriteBatch.DrawString(font, "Please click on the school of fish that looks more realistic? ", new Vector2(0, 0), Color.White);
-
                 compareVid.Draw(spriteBatch);
             }
             else if (testPart == TestPart.Cohesion100)
