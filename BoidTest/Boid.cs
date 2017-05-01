@@ -14,6 +14,7 @@ namespace BoidTest
 {
     public class Boid
     {
+        bool rangeOfEnemy = false;
         Texture2D fishTex;
        
         float speed =100.0f;
@@ -49,6 +50,7 @@ namespace BoidTest
 
         public void Update(Boid[] boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround,float keepDistance,float viewDistance)
         {
+            this.rangeOfEnemy = false;
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
             this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
@@ -65,7 +67,12 @@ namespace BoidTest
 
             //the direction should be normailized to maintain speed reliability
             dir.Normalize();
+
+            if (this.rangeOfEnemy == false)
+                this.speed = 100;
+
             pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
 
             for (int n = pos.Length-1; n > 0; n--)
             {
@@ -105,13 +112,20 @@ namespace BoidTest
                 {
                     if (boids[n] != this)
                     {
+
                         Vector2 boidVec = (boids[n].pos[0] - pos[0]);
                         if (boidVec.Length() < keepDistance)
                         {
+                            this.rangeOfEnemy = true;
                             //Separation, the closer to a flockmate, the more they are repelled
                             boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+
+                         
+
                             dir += boidVec;// * cordilate;
                         }
+
+
                         else if ((boidVec.Length() < visibalDistance))
                         {
                             //calculate avg data for Alignment and Cohation
@@ -211,6 +225,7 @@ namespace BoidTest
                 Vector2 OtherVec = this.pos[0] - obst[i].GetPos();
                 if(OtherVec.Length() < obst[i].GetInfluenceRange())
                 {
+                    this.rangeOfEnemy = true;
                     float constant = (OtherVec.Length() / obst[i].GetInfluenceRange()) * -1.0f;
                     v = OtherVec / OtherVec.Length();
                     v = v * constant;
@@ -225,10 +240,10 @@ namespace BoidTest
 
                     this.dir -=  w*v;
                 }
-                else
-                {
-                    this.speed = 100;
-                }
+                //else
+                //{
+                //    this.speed = 100;
+                //}
             }
         }
 

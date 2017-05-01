@@ -38,14 +38,14 @@ namespace BoidTest
         VariableSet[] sets;
         int currentSet=0;
 
-        Vector2 windowSize = new Vector2(900,900);
+        Vector2 windowSize = new Vector2(1920,1080);
         //Vector2 windowSize = new Vector2(200, 200);
 
         BitmapFont font;
         bool loopAround = false;
 
-        public float keepDistance = 50;
-        public float visibalDistance = 140;
+        public float keepDistance = 46;
+        public float visibalDistance = 70;
 
         KeyboardState lastState;
         public Game1()
@@ -54,6 +54,8 @@ namespace BoidTest
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = (int)windowSize.X;
             graphics.PreferredBackBufferHeight = (int)windowSize.Y;
+
+            graphics.IsFullScreen = true;
         }
 
         protected override void Initialize()
@@ -166,11 +168,11 @@ namespace BoidTest
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
-            for (int i = 0; i < feed.Count; i++)
-                this.feed[i].Draw(spriteBatch);
+            //for (int i = 0; i < feed.Count; i++)
+            //    this.feed[i].Draw(spriteBatch);
 
-            for (int i = 0; i < this.obst.Count; i++)
-                this.obst[i].Draw(spriteBatch);
+            //for (int i = 0; i < this.obst.Count; i++)
+            //    this.obst[i].Draw(spriteBatch);
 
 
             for (int n = 0; n < boids.Length; n++)
