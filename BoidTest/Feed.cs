@@ -37,7 +37,7 @@ namespace BoidTest
             }
             else
             {
-                this.pos = new Vector2(800, 800);
+                this.pos = new Vector2(1180, 680);
             }
             countDown -= gameTime.ElapsedGameTime.TotalSeconds;
             if(countDown<0)

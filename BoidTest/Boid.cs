@@ -16,7 +16,7 @@ namespace BoidTest
     {
         Texture2D fishTex;
        
-        float speed =100.0f;
+        float speed = 100.0f;
         float size = 0.08f;
 
 
@@ -25,6 +25,11 @@ namespace BoidTest
 
         Vector2 windowSize;
         Color color;
+
+        Vector2 vSep = new Vector2(0,0);
+        Vector2 vCoha = new Vector2(0,0);
+        Vector2 alignVec = new Vector2(0,0);
+        Vector2 foodVec = new Vector2(0,0);
 
         public Boid(ContentManager content,Vector2 windowSize,Vector2 posIn,Random randum)
         {
@@ -52,7 +57,7 @@ namespace BoidTest
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
 
-            this.FollowingFeed(feeds, 1000);
+            this.FollowingFeed(feeds, 2000);
 
             this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
 
@@ -67,8 +72,13 @@ namespace BoidTest
             this.ReinitializeBoidPosition(loopAround);
 
             //the direction should be normailized to maintain speed reliability
+            //dir = this.vSep + this.alignVec + this.vCoha;
+
             dir.Normalize();
             pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+           
+
+
 
             for (int n = pos.Length-1; n > 0; n--)
             {
@@ -120,6 +130,7 @@ namespace BoidTest
                                 boidVec = new Vector2(0, -1 + (n * 0.1f));
 
                             dir += boidVec;// * cordilate;
+                            //this.vSep = boidVec;
                         }
                         else if ((boidVec.Length() < visibalDistance))
                         {
@@ -142,10 +153,14 @@ namespace BoidTest
             {
                 if (newAveragePosition != pos[0])
                 {
-                    newAveragePosition /= boidsInVisibalDistance;
+                    newAveragePosition /= (boidsInVisibalDistance);
+                    
                     Vector2 dirToCenter = newAveragePosition - pos[0];
 
-                    dir += dirToCenter / dirToCenter.Length();
+                    //Vector2 dirToCenter = pos[0] -newAveragePosition;
+
+                    //this.vCoha = dirToCenter / dirToCenter.Length();
+                    dir += (dirToCenter / dirToCenter.Length());
                 }
 
                 //Adjust the moving direction according to the flocks average direction, Alignment
@@ -154,6 +169,7 @@ namespace BoidTest
                     averageDirection /= boidsInVisibalDistance;
 
                     dir += averageDirection;
+                    //this.alignVec = averageDirection;
                 }
             }
         }
@@ -171,6 +187,7 @@ namespace BoidTest
                     {
                         FoodVec /= FoodVec.Length();
                         this.dir += FoodVec * 0.2f;
+                        //this.foodVec = FoodVec * 0.2f;
                     }
 
                 }

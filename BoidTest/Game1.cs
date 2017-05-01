@@ -37,7 +37,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 50;
+        int amountOfFish = 5;
         Boid[] boids;
 
         List<Feed> feed;
@@ -48,8 +48,9 @@ namespace BoidTest
 
         TestPart testPart;
 
-        Vector2 windowSize = new Vector2(900, 900);
+        //Vector2 windowSize = new Vector2(900, 900);
         //Vector2 windowSize = new Vector2(200, 200);
+        Vector2 windowSize = new Vector2(1280, 720);
 
         BitmapFont font;
         bool loopAround = false;
@@ -93,9 +94,9 @@ namespace BoidTest
 
             sets = new VariableSet[]
             {
-                new VariableSet(20,200),
+                //new VariableSet(20,200),
                 //new VariableSet(30,200),
-                //new VariableSet(40,200),
+                new VariableSet(40,200),
                 //new VariableSet(50,200),
                 //new VariableSet(60,200),
                 //new VariableSet(70,200),
