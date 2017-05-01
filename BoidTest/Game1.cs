@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -27,9 +28,17 @@ namespace BoidTest
     enum TestPart
     {
         intro,
-        Seperation15,
-        Cohesion15,
-        freeMode
+
+        Seperation5,
+        Cohesion5,
+        Seperation50,
+        Cohesion50,
+        Seperation100,
+        Cohesion100,
+
+        nrOfTest,
+        freeMode,
+        testDone
     }
 
     public class Game1 : Game
@@ -48,7 +57,7 @@ namespace BoidTest
 
         TestPart testPart;
 
-        Vector2 windowSize = new Vector2(900, 900);
+        Vector2 windowSize = new Vector2(1920, 900);
         //Vector2 windowSize = new Vector2(200, 200);
 
         BitmapFont font;
@@ -58,12 +67,22 @@ namespace BoidTest
         public float visibalDistance = 140;
 
         KeyboardState lastState;
+
+        CompareVid compareVid;
+        string resultString;
+
+        string introText;
+
+        bool[] donepart;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = (int)windowSize.X;
             graphics.PreferredBackBufferHeight = (int)windowSize.Y;
+
+            IsMouseVisible = true;
         }
 
         protected override void Initialize()
@@ -71,12 +90,14 @@ namespace BoidTest
             // TODO: Add your initialization logic here
             Random randum = new Random();
 
-            testPart = TestPart.freeMode;
+            testPart = TestPart.intro;
 
             boids = new Boid[amountOfFish];
 
             this.feed = new List<Feed>();
             this.obst = new List<Obst>();
+
+            donepart = new bool[3] { false, false, false };
 
             this.feed.Add(new Feed(Content, new Vector2(800.0f, 800.0f)));
             //this.feed.Add(new Feed(Content, new Vector2(200.0f, 400.0f)));
@@ -111,6 +132,15 @@ namespace BoidTest
                 new VariableSet(40,52),
             };
 
+            introText = "In this case study we study the boid algorithm and try to make is as \nrealistic as possible."+
+                        "In this form you will \nbe shown multiple instances of a flock and at the same time \n" +
+                        "choose witch one of the videos you find the most realistic.\n" +
+                        "Please understand that you can quit the test at anytime if you wish,\nif so; no personal data will be saved.\n" +
+
+                       "Thank you for taking the time to participate in this study.\n" +
+                       "Best wishes\n" +
+                        "Sebastian Lundgren\n" +
+                        "Max Larsson\n";
 
             base.Initialize();
         }
@@ -136,7 +166,7 @@ namespace BoidTest
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Enter) && lastState != Keyboard.GetState())
                 {
-                    testPart = TestPart.freeMode;
+                    NextPart();
                 }
             }
             else if (testPart == TestPart.freeMode)
@@ -178,11 +208,126 @@ namespace BoidTest
 
                 }
 
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter) && lastState != Keyboard.GetState())
+                {
+                    testPart = TestPart.testDone;
+                }
 
             }
-            else
+            else if (testPart == TestPart.Seperation5)
             {
+                string tempString = compareVid.Update();
+                if (tempString != "")
+                {
+                    resultString += tempString + "\n";
+                    testPart = TestPart.Cohesion5;
 
+                    UnloadVideo();
+
+                    resultString += "Test Cohesion 5 boids: ";
+                    //CHANGE THIS LATER
+                    string[] ds = new string[]
+                    {
+                    "Boids50Sep\\CS_20.Wmv",
+                    "Boids50Sep\\CS_40.Wmv",
+                    "Boids50Sep\\CS_60.Wmv",
+                    "Boids50Sep\\CS_80.Wmv",
+                    "Boids50Sep\\CS_100.Wmv",
+                    };
+                    compareVid = new CompareVid(this, ds);
+                }
+            }
+            else if (testPart == TestPart.Cohesion5)
+            {
+                string tempString = compareVid.Update();
+                if (tempString != "")
+                {
+                    resultString += tempString + "\n";
+                    UnloadVideo();
+                    NextPart();
+                }
+            }
+            else if(testPart == TestPart.Seperation50)
+            {
+                string tempString = compareVid.Update();
+                if(tempString != "")
+                {
+                    resultString += tempString + "\n";
+                    testPart = TestPart.Cohesion50;
+
+                    UnloadVideo();
+
+                    resultString += "Test Cohesion 50 boids: ";
+                    //CHANGE THIS LATER
+                    string[] ds = new string[]
+                    {
+                    "Boids50Sep\\CS_20.Wmv",
+                    "Boids50Sep\\CS_40.Wmv",
+                    "Boids50Sep\\CS_60.Wmv",
+                    "Boids50Sep\\CS_80.Wmv",
+                    "Boids50Sep\\CS_100.Wmv",
+                    };
+                    compareVid = new CompareVid(this, ds);
+                }
+            }
+            else if (testPart == TestPart.Cohesion50)
+            {
+                string tempString = compareVid.Update();
+                if (tempString != "")
+                {
+                    resultString += tempString + "\n";
+                    UnloadVideo();
+                    NextPart();
+                }
+            }
+            else if (testPart == TestPart.Seperation100)
+            {
+                string tempString = compareVid.Update();
+                if (tempString != "")
+                {
+                    resultString += tempString + "\n";
+
+                    UnloadVideo();
+
+                    testPart = TestPart.Cohesion100;
+
+                    resultString += "Test Cohesion 100 boids: ";
+                    //CHANGE THIS LATER
+                    string[] ds = new string[]
+                    {
+                    "Boids50Sep\\CS_20.Wmv",
+                    "Boids50Sep\\CS_40.Wmv",
+                    "Boids50Sep\\CS_60.Wmv",
+                    "Boids50Sep\\CS_80.Wmv",
+                    "Boids50Sep\\CS_100.Wmv",
+                    };
+                    compareVid = new CompareVid(this, ds);
+                }
+            }
+            else if (testPart == TestPart.Cohesion100)
+            {
+                string tempString = compareVid.Update();
+                if (tempString != "")
+                {
+                    resultString += tempString + "\n";
+                    UnloadVideo();
+                    NextPart();
+                }
+            }
+            else if (testPart == TestPart.nrOfTest)
+            {
+                string tempString = compareVid.Update();
+                if (tempString != "")
+                {
+                    resultString += tempString + "\n";
+                    UnloadVideo();
+                    testPart = TestPart.freeMode;
+                }
+            }
+            else if (testPart == TestPart.testDone)
+            {
+                SaveResult();
+                this.Exit();
             }
 
             lastState = Keyboard.GetState();
@@ -191,7 +336,7 @@ namespace BoidTest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.PaleVioletRed);
             spriteBatch.Begin();
             #region FreeMode
             if (testPart == TestPart.freeMode)
@@ -206,7 +351,6 @@ namespace BoidTest
                 for (int n = 0; n < boids.Length; n++)
                 {
                     boids[n].Draw(spriteBatch);
-
                 }
 
                 spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
@@ -219,13 +363,164 @@ namespace BoidTest
             #endregion
             else if (testPart == TestPart.intro)
             {
-                spriteBatch.DrawString(font, "Text that explains he what this test \nis for", new Vector2(0, 0), Color.White);
+                spriteBatch.DrawString(font, introText, new Vector2(0, 0), Color.White);
 
+            }
+            else if (testPart == TestPart.Seperation5)
+            {
+                spriteBatch.DrawString(font, "Please click on the school of fish that looks more realistic? ", new Vector2(0, 0), Color.White);
+
+                compareVid.Draw(spriteBatch);
+            }
+            else if (testPart == TestPart.Cohesion5)
+            {
+                spriteBatch.DrawString(font, "Which school of fish reaction to the predator is the most realistic?", new Vector2(0, 0), Color.White);
+
+                compareVid.Draw(spriteBatch);
+            }
+            else if(testPart == TestPart.Seperation50)
+            {
+                spriteBatch.DrawString(font, "Please click on the school of fish that looks more realistic? ", new Vector2(0, 0), Color.White);
+
+                compareVid.Draw(spriteBatch);
+            }
+            else if (testPart == TestPart.Cohesion50)
+            {
+                spriteBatch.DrawString(font, "Which school of fish reaction to the predator is the most realistic?", new Vector2(0, 0), Color.White);
+
+                compareVid.Draw(spriteBatch);
+            }
+            else if (testPart == TestPart.Seperation100)
+            {
+                spriteBatch.DrawString(font, "Please click on the school of fish that looks more realistic? ", new Vector2(0, 0), Color.White);
+
+                compareVid.Draw(spriteBatch);
+            }
+            else if (testPart == TestPart.Cohesion100)
+            {
+                spriteBatch.DrawString(font, "Which school of fish reaction to the predator is the most realistic?", new Vector2(0, 0), Color.White);
+
+                compareVid.Draw(spriteBatch);
+            }
+            else if (testPart == TestPart.nrOfTest)
+            {
+                spriteBatch.DrawString(font, "Which school of fish do you prefer?", new Vector2(0, 0), Color.White);
+
+                compareVid.Draw(spriteBatch);
             }
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void SaveResult()
+        {
+            Random rand = new Random();
+
+            string filename = "TestResult\\Test" + rand.Next(0,100) +"-"+rand.Next(0,300);//= setFileName;
+
+            StreamWriter sWriter = new StreamWriter(filename);
+
+            sWriter.Write(resultString);
+
+            sWriter.Close();
+        }
+
+        private void UnloadVideo()
+        {
+            if (compareVid != null)
+                compareVid.Unload();
+            compareVid = null;
+        }
+
+        private void NextPart()
+        {
+            bool done = true;
+           for(int n = 0;n<3;n++)
+            {
+                if (!donepart[n])
+                    done = false;
+            }
+            if (done)
+            {
+                testPart = TestPart.nrOfTest;
+
+                resultString += "Test Preferred NrOF: ";
+                ////////////CHANGE
+                string[] ds = new string[]
+                {
+                    "Boids50Sep\\CS_40.Wmv",
+                    "Boids50Sep\\CS_40.Wmv",
+                    "Boids100Sep\\CS_40.Wmv",
+                };
+                compareVid = new CompareVid(this, ds);
+
+                return;
+            }
+
+            Random rand = new Random();
+            int activePart = rand.Next(0, 3);
+
+            while(donepart[activePart])
+            {
+                activePart = rand.Next(0, 3);
+            }
+            donepart[activePart] = true;
+            if (activePart == 0) /// low
+            {
+                testPart = TestPart.Seperation5;
+                resultString += "Test Seperation 5 boids: ";
+                ////////////CHANGE
+                string[] ds = new string[]
+                {
+                    "Boids50Sep\\CS_20.Wmv",
+                    "Boids50Sep\\CS_40.Wmv",
+                    "Boids50Sep\\CS_60.Wmv",
+                    "Boids50Sep\\CS_80.Wmv",
+                    "Boids50Sep\\CS_100.Wmv",
+                };
+                compareVid = new CompareVid(this, ds);
+            }
+            else if(activePart == 1)  /// Mid
+            {
+                
+                testPart = TestPart.Seperation50;
+                resultString += "Test Seperation 50 boids: ";
+                string[] ds = new string[]
+                {
+                    "Boids50Sep\\CS_20.Wmv",
+                    "Boids50Sep\\CS_40.Wmv",
+                    "Boids50Sep\\CS_60.Wmv",
+                    "Boids50Sep\\CS_80.Wmv",
+                    "Boids50Sep\\CS_100.Wmv",
+                };
+                compareVid = new CompareVid(this, ds);
+
+            }
+            else if (activePart == 2)  // High
+            {
+                testPart = TestPart.Seperation100;
+
+                resultString += "Test Seperation 100 boids: ";
+                string[] ds = new string[]
+                {
+                    "Boids100Sep\\CS_20.Wmv",
+                    "Boids100Sep\\CS_40.Wmv",
+                    "Boids100Sep\\CS_60.Wmv",
+                    "Boids100Sep\\CS_80.Wmv",
+                    "Boids100Sep\\CS_100.Wmv",
+                };
+                compareVid = new CompareVid(this, ds);
+            }
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            if(compareVid != null)
+                compareVid.Unload();
+
+            base.OnExiting(sender, args);
         }
 
         private void SetCurrentSet()
