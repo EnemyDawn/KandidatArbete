@@ -26,15 +26,15 @@ namespace BoidTest
         Vector2 windowSize;
         Color color;
 
-        public Boid(ContentManager content,Vector2 windowSize,Random randum)
+        public Boid(ContentManager content,Vector2 windowSize,Vector2 posIn,Random randum)
         {
             this.windowSize = windowSize;
 
             //apply random postitions in the game
             //speed = randum.Next(50,130);
-            dir = new Vector2(randum.Next(-100, 100), randum.Next(-100, 100));
-            pos = new Vector2[randum.Next(14,30)];
-            pos[0] = new Vector2(randum.Next(0, (int)windowSize.X),randum.Next(0, (int)windowSize.Y));
+            dir = new Vector2(1,1);
+            pos = new Vector2[22];
+            pos[0] = posIn;// new Vector2(randum.Next(100, 120),randum.Next(100, 120));
             dir.Normalize();
             for (int n = 1; n < pos.Length; n++)
             {
@@ -43,7 +43,7 @@ namespace BoidTest
 
             color = new Color(randum.Next(150,255), randum.Next(150, 255), randum.Next(50, 60));
 
-            size = randum.Next(5, 10) * 0.01f;// 0.08f;
+            //size = randum.Next(5, 10) * 0.01f;// 0.08f;
             fishTex = content.Load<Texture2D>("Body");
         }
 
@@ -51,11 +51,14 @@ namespace BoidTest
         {
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
+
+            this.FollowingFeed(feeds, 1000);
+
             this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
 
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
-            //this.FollowingFeed(feeds);
+            
             //this.avoidingObst(obst);
             this.AvoidEnemyBoids(obst);
 
@@ -110,6 +113,12 @@ namespace BoidTest
                         {
                             //Separation, the closer to a flockmate, the more they are repelled
                             boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+
+                            if (float.IsNaN(boidVec.X))
+                                boidVec = new Vector2(-1+(n*0.1f), 0);
+                            if (float.IsNaN(boidVec.Y))
+                                boidVec = new Vector2(0, -1 + (n * 0.1f));
+
                             dir += boidVec;// * cordilate;
                         }
                         else if ((boidVec.Length() < visibalDistance))
@@ -161,7 +170,7 @@ namespace BoidTest
                     if(FoodVec.Length() > 0.1)
                     {
                         FoodVec /= FoodVec.Length();
-                        this.dir += FoodVec;
+                        this.dir += FoodVec * 0.2f;
                     }
 
                 }
@@ -209,7 +218,7 @@ namespace BoidTest
             for (int i = 0; i < obst.Count; i++)
             {
                 Vector2 OtherVec = this.pos[0] - obst[i].GetPos();
-                if(OtherVec.Length() < obst[i].GetInfluenceRange())
+                if(OtherVec.Length() < obst[i].GetInfluenceRange() && obst[i].active)
                 {
                     float constant = (OtherVec.Length() / obst[i].GetInfluenceRange()) * -1.0f;
                     v = OtherVec / OtherVec.Length();

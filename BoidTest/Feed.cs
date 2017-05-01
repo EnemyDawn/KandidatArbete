@@ -19,6 +19,9 @@ namespace BoidTest
 
         float speed = 0.1f;
 
+        int target = 0;
+        double countDown = 7;
+
         public Feed(ContentManager content, Vector2 pos)
         {
             this.FeedTex = content.Load<Texture2D>("fine");
@@ -26,9 +29,25 @@ namespace BoidTest
             this.dir = new Vector2(1.0f, 0.0f);
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
-            this.pos += this.dir * speed;
+            if(target == 0)
+            {
+                this.pos = new Vector2(100, 100);
+            }
+            else
+            {
+                this.pos = new Vector2(800, 800);
+            }
+            countDown -= gameTime.ElapsedGameTime.TotalSeconds;
+            if(countDown<0)
+            {
+                target++;
+                target = target %2;
+                countDown = 7;
+            }
+
+
         }
 
         public void Draw(SpriteBatch spriteBatch)

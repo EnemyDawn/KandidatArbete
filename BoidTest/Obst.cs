@@ -18,6 +18,8 @@ namespace BoidTest
 
         float influenceRadius;
 
+        public bool active = false;
+
         public Obst(ContentManager content, Vector2 pos)
         {
             this.FeedTex = content.Load<Texture2D>("Body");
@@ -32,22 +34,34 @@ namespace BoidTest
 
         public void Update()
         {
-            this.pos.X = Mouse.GetState().X;
-            this.pos.Y = Mouse.GetState().Y;
+           if(Keyboard.GetState().IsKeyDown(Keys.Space) && !active)
+            {
+                active = true;
+                pos = new Vector2(800, 800);
+            }
+
+           if(active)
+            {
+                Vector2 dir = (new Vector2(100, 100) - pos);// * 3;
+                dir.Normalize();
+                pos += dir * 4;
+                if ((new Vector2(100, 100) - pos).Length() <10)
+                    active = false;
+            }
 
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
 
-
-            spriteBatch.Draw(this.FeedTex, this.pos, new Rectangle(0, 0, this.FeedTex.Width, this.FeedTex.Height),
-                Color.Red,
-                0,
-                new Vector2(0,0),
-                this.size,
-                SpriteEffects.None, 1
-                );
+            if(active)
+                spriteBatch.Draw(this.FeedTex, this.pos, new Rectangle(0, 0, this.FeedTex.Width, this.FeedTex.Height),
+                    Color.Red,
+                    0,
+                    new Vector2(0,0),
+                    this.size,
+                    SpriteEffects.None, 1
+                    );
         }
 
         public Vector2 GetPos()

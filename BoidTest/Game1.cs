@@ -24,21 +24,31 @@ namespace BoidTest
         }
     }
 
+    enum TestPart
+    {
+        intro,
+        Seperation15,
+        Cohesion15,
+        freeMode
+    }
+
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 500;
+        int amountOfFish = 50;
         Boid[] boids;
 
         List<Feed> feed;
         List<Obst> obst;
 
         VariableSet[] sets;
-        int currentSet=0;
+        int currentSet = 0;
 
-        Vector2 windowSize = new Vector2(900,900);
+        TestPart testPart;
+
+        Vector2 windowSize = new Vector2(900, 900);
         //Vector2 windowSize = new Vector2(200, 200);
 
         BitmapFont font;
@@ -61,21 +71,24 @@ namespace BoidTest
             // TODO: Add your initialization logic here
             Random randum = new Random();
 
+            testPart = TestPart.freeMode;
+
             boids = new Boid[amountOfFish];
 
             this.feed = new List<Feed>();
             this.obst = new List<Obst>();
 
-            //this.feed.Add(new Feed(Content, new Vector2(200.0f, 200.0f)));
+            this.feed.Add(new Feed(Content, new Vector2(800.0f, 800.0f)));
             //this.feed.Add(new Feed(Content, new Vector2(200.0f, 400.0f)));
 
             this.obst.Add(new Obst(Content, new Vector2(100.0f, 100.0f)));
 
             this.font = Content.Load<BitmapFont>("BIG");
 
+            Vector2 startPos = new Vector2(100, 100);
             for (int n = 0; n < amountOfFish; n++)
             {
-                boids[n] = new Boid(Content, windowSize, randum);
+                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X, startPos.Y), randum);
             }
 
             sets = new VariableSet[]
@@ -119,41 +132,56 @@ namespace BoidTest
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Y))
-                keepDistance--;
-            if (Keyboard.GetState().IsKeyDown(Keys.U) && keepDistance < visibalDistance-10)
-                keepDistance++;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.H) && keepDistance < visibalDistance - 10)
-                visibalDistance--;
-            if (Keyboard.GetState().IsKeyDown(Keys.J))
-                visibalDistance++;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.O) && lastState != Keyboard.GetState())
+            if (testPart == TestPart.intro)
             {
-                if (currentSet > 0)
-                    currentSet--;
-                SetCurrentSet();
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter) && lastState != Keyboard.GetState())
+                {
+                    testPart = TestPart.freeMode;
+                }
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.P) && lastState != Keyboard.GetState())
+            else if (testPart == TestPart.freeMode)
             {
-                if (currentSet < sets.Length-1)
-                    currentSet++;
-                SetCurrentSet();
+                if (Keyboard.GetState().IsKeyDown(Keys.Y))
+                    keepDistance--;
+                if (Keyboard.GetState().IsKeyDown(Keys.U) && keepDistance < visibalDistance - 10)
+                    keepDistance++;
+
+                if (Keyboard.GetState().IsKeyDown(Keys.H) && keepDistance < visibalDistance - 10)
+                    visibalDistance--;
+                if (Keyboard.GetState().IsKeyDown(Keys.J))
+                    visibalDistance++;
+
+                if (Keyboard.GetState().IsKeyDown(Keys.O) && lastState != Keyboard.GetState())
+                {
+                    if (currentSet > 0)
+                        currentSet--;
+                    SetCurrentSet();
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.P) && lastState != Keyboard.GetState())
+                {
+                    if (currentSet < sets.Length - 1)
+                        currentSet++;
+                    SetCurrentSet();
+                }
+
+                // TODO: Add your update logic here
+
+                for (int i = 0; i < feed.Count; i++)
+                    this.feed[i].Update(gameTime);
+
+                for (int i = 0; i < obst.Count; i++)
+                    this.obst[i].Update();
+
+                for (int n = 0; n < boids.Length; n++)
+                {
+                    boids[n].Update(this.boids, this.feed, this.obst, gameTime, loopAround, keepDistance, visibalDistance);
+
+                }
+
+
             }
-
-            // TODO: Add your update logic here
-
-            for (int i = 0; i < feed.Count; i++)
-                this.feed[i].Update();
-
-            for (int i = 0; i < obst.Count; i++)
-                this.obst[i].Update();
-
-            for (int n = 0;n<boids.Length;n++)
-             {
-               boids[n].Update(this.boids, this.feed, this.obst, gameTime, loopAround,keepDistance, visibalDistance);
+            else
+            {
 
             }
 
@@ -165,24 +193,36 @@ namespace BoidTest
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-
-            for (int i = 0; i < feed.Count; i++)
-                this.feed[i].Draw(spriteBatch);
-
-            for (int i = 0; i < this.obst.Count; i++)
-                this.obst[i].Draw(spriteBatch);
-
-
-            for (int n = 0; n < boids.Length; n++)
+            #region FreeMode
+            if (testPart == TestPart.freeMode)
             {
-                boids[n].Draw(spriteBatch);
+                for (int i = 0; i < feed.Count; i++)
+                    this.feed[i].Draw(spriteBatch);
+
+                for (int i = 0; i < this.obst.Count; i++)
+                    this.obst[i].Draw(spriteBatch);
+
+
+                for (int n = 0; n < boids.Length; n++)
+                {
+                    boids[n].Draw(spriteBatch);
+
+                }
+
+                spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
+                spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+                spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+
+
+                
+            }
+            #endregion
+            else if (testPart == TestPart.intro)
+            {
+                spriteBatch.DrawString(font, "Text that explains he what this test \nis for", new Vector2(0, 0), Color.White);
 
             }
 
-            //spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0,0),Color.White);
-            //spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-            //spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
-            
             spriteBatch.End();
 
             base.Draw(gameTime);
