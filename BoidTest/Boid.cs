@@ -14,10 +14,10 @@ namespace BoidTest
 {
     public class Boid
     {
-        Texture2D fishTex;
+        Texture2D[] fishTex;
        
         float speed =100.0f;
-        float size = 0.08f;
+        float size = 0.2f;
 
 
         Vector2[] pos;
@@ -33,7 +33,7 @@ namespace BoidTest
             //apply random postitions in the game
             //speed = randum.Next(50,130);
             dir = new Vector2(1,1);
-            pos = new Vector2[22];
+            pos = new Vector2[61];
             pos[0] = posIn;// new Vector2(randum.Next(100, 120),randum.Next(100, 120));
             dir.Normalize();
             for (int n = 1; n < pos.Length; n++)
@@ -44,7 +44,16 @@ namespace BoidTest
             color = new Color(randum.Next(150,255), randum.Next(150, 255), randum.Next(50, 60));
 
             //size = randum.Next(5, 10) * 0.01f;// 0.08f;
-            fishTex = content.Load<Texture2D>("Body");
+            fishTex = new Texture2D[]
+            {
+                content.Load<Texture2D>("Fish\\head"),
+                content.Load<Texture2D>("Fish\\b1"),
+                content.Load<Texture2D>("Fish\\b2"),
+                content.Load<Texture2D>("Fish\\b3"),
+                content.Load<Texture2D>("Fish\\b4"),
+                content.Load<Texture2D>("Fish\\tail"),
+            };
+                
         }
 
         public void Update(Boid[] boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround,float keepDistance,float viewDistance)
@@ -79,22 +88,35 @@ namespace BoidTest
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            float rotation = (float)(Math.Atan2(dir.Y, dir.X));// / (2 * Math.PI));
+            float rotation = (float)(Math.Atan2(-dir.Y, dir.X));// / (2 * Math.PI));
+            Vector2 rotToFront = new Vector2();
+            int countDown = 50;
 
-            float tempSize = size / pos.Length;
-            float startValue = tempSize;
-
-            for (int n = pos.Length - 1; n >= 0; n--)
+            for (int n = fishTex.Length - 1; n >= 1; n--)
             {
-                tempSize += startValue;
+                rotToFront = pos[countDown - 10] -pos[countDown];
+                //rotToFront.Normalize();
+                
+                rotation = (float)(Math.Atan2(-rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
 
-                spriteBatch.Draw(fishTex, pos[n], new Rectangle(0, 0, fishTex.Width, fishTex.Height), new Color(color.R + (n * 2), color.G + (n * 2), color.B + (n * 2)),
+                spriteBatch.Draw(fishTex[n], pos[countDown], new Rectangle(0, 0, fishTex[n].Width, fishTex[n].Height), new Color(color.R + (n * 2), color.G + (n * 2), color.B + (n * 2)),
                     rotation,
-                    new Vector2(fishTex.Width, (fishTex.Height / 2)),
-                    tempSize,
+                    new Vector2(fishTex[n].Width / 2, (fishTex[n].Height)),
+                    size,
                     SpriteEffects.None, 1
                     );
+
+                countDown -= 10;
             }
+            rotToFront = pos[0] - pos[10];
+            rotation = (float)(Math.Atan2(-rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
+
+            spriteBatch.Draw(fishTex[0], pos[1], new Rectangle(0, 0, fishTex[0].Width, fishTex[0].Height), new Color(color.R + (0 * 2), color.G + (0 * 2), color.B + (0 * 2)),
+                    rotation,
+                    new Vector2(fishTex[0].Width / 2, (fishTex[0].Height)),
+                    size,
+                    SpriteEffects.None, 1
+                    );
         }
 
         private void BoidsFirstRules(Boid[] boids,bool loopAround,float keepDistance,float visibalDistance)
@@ -159,11 +181,10 @@ namespace BoidTest
                     dir += averageDirection;
                 }
 
-                if(averageSepForce != new Vector2(0,0))
-                {
+
                     //averageSepForce /= boidsInVisibalDistance;
                     dir += averageSepForce;
-                } 
+
             }
         }
 
@@ -254,37 +275,37 @@ namespace BoidTest
         {
             if (loopAround)
             {
-                if (pos[0].X < -(fishTex.Width * size))
+                if (pos[0].X < -(fishTex[0].Width * size))
                 {
-                    pos[0].X = windowSize.X + (fishTex.Width * size);
+                    pos[0].X = windowSize.X + (fishTex[0].Width * size);
 
                 }
-                else if (pos[0].Y < -(fishTex.Height * size) )
+                else if (pos[0].Y < -(fishTex[0].Height * size) )
                 {
-                    pos[0].Y = windowSize.Y + (fishTex.Height * size);
+                    pos[0].Y = windowSize.Y + (fishTex[0].Height * size);
                 }
                 else
                 {
-                    pos[0].X = pos[0].X % (windowSize.X + (fishTex.Width * size) );
-                    pos[0].Y = pos[0].Y % (windowSize.Y + (fishTex.Height * size));
+                    pos[0].X = pos[0].X % (windowSize.X + (fishTex[0].Width * size) );
+                    pos[0].Y = pos[0].Y % (windowSize.Y + (fishTex[0].Height * size));
                 }
             }
             else
             {
                 ///This if for when we do not want to loop the fish tank, we simply tell the boids to bound of the edges
-                if (pos[0].X > windowSize.X + (fishTex.Width * size))
+                if (pos[0].X > windowSize.X + (fishTex[0].Width * size))
                 {
                     dir = -dir;
                 }
-                if (pos[0].Y > windowSize.Y + (fishTex.Height * size))
+                if (pos[0].Y > windowSize.Y + (fishTex[0].Height * size))
                 {
                     dir = -dir;
                 }
-                if (pos[0].X < -(fishTex.Width * size))
+                if (pos[0].X < -(fishTex[0].Width * size))
                 {
                     dir = -dir;
                 }
-                if (pos[0].Y < -(fishTex.Height * size))
+                if (pos[0].Y < -(fishTex[0].Height * size))
                 {
                     dir = -dir;
                 }

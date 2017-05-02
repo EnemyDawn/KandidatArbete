@@ -46,7 +46,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 66;
+        int amountOfFish = 2;
         Boid[] boids;
 
         List<Feed> feed;
@@ -109,7 +109,7 @@ namespace BoidTest
             Vector2 startPos = new Vector2(100, 100);
             for (int n = 0; n < amountOfFish; n++)
             {
-                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X, startPos.Y), randum);
+                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X + (n*10), startPos.Y + (n * 12)), randum);
             }
 
             sets = new VariableSet[]
