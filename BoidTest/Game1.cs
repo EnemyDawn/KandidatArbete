@@ -46,7 +46,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 50;
+        int amountOfFish = 66;
         Boid[] boids;
 
         List<Feed> feed;
@@ -90,7 +90,7 @@ namespace BoidTest
             // TODO: Add your initialization logic here
             Random randum = new Random();
 
-            testPart = TestPart.intro;
+            testPart = TestPart.freeMode;
 
             boids = new Boid[amountOfFish];
 
@@ -353,12 +353,9 @@ namespace BoidTest
                     boids[n].Draw(spriteBatch);
                 }
 
-                //spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
-                //spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-                //spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
-
-
-                
+                spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
+                spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+                spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
             }
             #endregion
             else if (testPart == TestPart.intro)

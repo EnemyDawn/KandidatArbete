@@ -99,12 +99,13 @@ namespace BoidTest
 
         private void BoidsFirstRules(Boid[] boids,bool loopAround,float keepDistance,float visibalDistance)
         {
-            Vector2 newAveragePosition = pos[0];
+            Vector2 averageSepForce = new Vector2(0.0f, 0.0f);
+            Vector2 newAveragePosition = new Vector2(0.0f, 0.0f);
             Vector2 averageDirection = new Vector2(0.0f, 0.0f);
-            int boidsInVisibalDistance = 1;
-            if (!loopAround)
-            {
-                for (int n = 0; n < boids.Length; n++)
+            int boidsInVisibalDistance = 0;
+            int boidsKeepDistance = 0;
+
+            for (int n = 0; n < boids.Length; n++)
                 {
                     if (boids[n] != this)
                     {
@@ -119,9 +120,10 @@ namespace BoidTest
                             if (float.IsNaN(boidVec.Y))
                                 boidVec = new Vector2(0, -1 + (n * 0.1f));
 
-                            dir += boidVec;// * cordilate;
+                            averageSepForce += boidVec;// * cordilate;
+                            boidsKeepDistance++;
                         }
-                        else if ((boidVec.Length() < visibalDistance))
+                        if ((boidVec.Length() < visibalDistance))
                         {
                             //calculate avg data for Alignment and Cohation
                             newAveragePosition += boids[n].pos[0];
@@ -133,19 +135,20 @@ namespace BoidTest
                         }
                     }
                 }
-            }
+            
 
 
             //Adjust boid to follow the flocks average position, cohation 
 
             if (boidsInVisibalDistance > 0)
             {
+                newAveragePosition /= boidsInVisibalDistance;
                 if (newAveragePosition != pos[0])
                 {
-                    newAveragePosition /= boidsInVisibalDistance;
+                    
                     Vector2 dirToCenter = newAveragePosition - pos[0];
-
                     dir += dirToCenter / dirToCenter.Length();
+
                 }
 
                 //Adjust the moving direction according to the flocks average direction, Alignment
@@ -155,6 +158,12 @@ namespace BoidTest
 
                     dir += averageDirection;
                 }
+
+                if(averageSepForce != new Vector2(0,0))
+                {
+                    //averageSepForce /= boidsInVisibalDistance;
+                    dir += averageSepForce;
+                } 
             }
         }
 
