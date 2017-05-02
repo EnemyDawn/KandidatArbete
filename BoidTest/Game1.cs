@@ -37,7 +37,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 5;
+        int amountOfFish = 50;
         Boid[] boids;
 
         List<Feed> feed;
@@ -181,10 +181,6 @@ namespace BoidTest
 
 
             }
-            else
-            {
-
-            }
 
             lastState = Keyboard.GetState();
             base.Update(gameTime);
@@ -210,9 +206,9 @@ namespace BoidTest
 
                 }
 
-                //spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
-                //spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-                //spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+                spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
+                spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+                spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
 
 
                 

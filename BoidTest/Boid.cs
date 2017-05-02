@@ -26,10 +26,13 @@ namespace BoidTest
         Vector2 windowSize;
         Color color;
 
-        Vector2 vSep = new Vector2(0,0);
-        Vector2 vCoha = new Vector2(0,0);
-        Vector2 alignVec = new Vector2(0,0);
-        Vector2 foodVec = new Vector2(0,0);
+        Vector2 vSep;
+        Vector2 vAlign;
+        Vector2 vCohe;
+
+        Vector2 vFeed;
+        Vector2 vEnemy;
+
 
         public Boid(ContentManager content,Vector2 windowSize,Vector2 posIn,Random randum)
         {
@@ -39,6 +42,14 @@ namespace BoidTest
             //speed = randum.Next(50,130);
             dir = new Vector2(1,1);
             pos = new Vector2[22];
+
+            this.vSep = new Vector2(1, 1);
+            this.vAlign = new Vector2(1, 1);
+            this.vSep = new Vector2(1, 1);
+
+            this.vFeed = new Vector2(1, 1);
+            this.vEnemy = new Vector2(1, 1);
+
             pos[0] = posIn;// new Vector2(randum.Next(100, 120),randum.Next(100, 120));
             dir.Normalize();
             for (int n = 1; n < pos.Length; n++)
@@ -57,25 +68,45 @@ namespace BoidTest
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
 
+            Vector2 avgPos = new Vector2(1, 1);
+            Vector2 avgDir = new Vector2(1, 1);
+            int visibleBoids = 0;
+
+
             this.FollowingFeed(feeds, 2000);
 
-            this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
+            Vector2 temp = new Vector2(1, 1);
+
+            this.calcSeparation(boids, keepDistance, viewDistance);
+
+            //inte säker på att denna fungerar
+            this.calcAvg(boids, keepDistance, viewDistance, ref avgPos, ref avgDir, ref visibleBoids);
+
+            this.calcCohesion(boids, keepDistance, viewDistance, visibleBoids, avgPos);
+
+            
+
+            //this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
 
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
             
             //this.avoidingObst(obst);
-            this.AvoidEnemyBoids(obst);
+            //this.AvoidEnemyBoids(obst);
 
 
             //simple function that moves the boids back to the screen
             this.ReinitializeBoidPosition(loopAround);
 
             //the direction should be normailized to maintain speed reliability
-            //dir = this.vSep + this.alignVec + this.vCoha;
+
+            dir += this.vSep;// + 0.2f* this.vAlign + 0.02f * this.vCohe + 0.2f * this.vFeed;
+            //dir += this.vAlign;
 
             dir.Normalize();
+
             pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            //pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
            
 
 
@@ -107,69 +138,71 @@ namespace BoidTest
             }
         }
 
-        private void BoidsFirstRules(Boid[] boids,bool loopAround,float keepDistance,float visibalDistance)
+        private void calcSeparation(Boid[] boids, float keepDistance, float visibalDistance)
         {
-            Vector2 newAveragePosition = pos[0];
-            Vector2 averageDirection = new Vector2(0.0f, 0.0f);
-            int boidsInVisibalDistance = 1;
-            if (!loopAround)
+            for(int i = 0; i < boids.Length; i++)
             {
-                for (int n = 0; n < boids.Length; n++)
+                if(boids[i] != this)
                 {
-                    if (boids[n] != this)
+                    Vector2 boidVec = boids[i].pos[0] - pos[0];
+                    if (boidVec.Length() < keepDistance)
                     {
-                        Vector2 boidVec = (boids[n].pos[0] - pos[0]);
-                        if (boidVec.Length() < keepDistance)
-                        {
-                            //Separation, the closer to a flockmate, the more they are repelled
-                            boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+                        float mod = boidVec.Length() / keepDistance;
+                        mod -= 1;
 
-                            if (float.IsNaN(boidVec.X))
-                                boidVec = new Vector2(-1+(n*0.1f), 0);
-                            if (float.IsNaN(boidVec.Y))
-                                boidVec = new Vector2(0, -1 + (n * 0.1f));
+                        this.vSep = mod * (boidVec / boidVec.Length());
 
-                            dir += boidVec;// * cordilate;
-                            //this.vSep = boidVec;
-                        }
-                        else if ((boidVec.Length() < visibalDistance))
-                        {
-                            //calculate avg data for Alignment and Cohation
-                            newAveragePosition += boids[n].pos[0];
+                        if (float.IsNaN(vSep.X))
+                            this.vSep = new Vector2(-1 + (i * 0.1f), 0);
+                        if (float.IsNaN(vSep.Y))
+                            this.vSep = new Vector2(0, -1 + (i * 0.1f));
 
-                            averageDirection += boids[n].dir;
-
-                            boidsInVisibalDistance++;
-                           
-                        }
                     }
                 }
+              
             }
+       }
 
+        private void calcAvg(Boid[] boids, float keepDistance, float visibalDistance, ref Vector2 newAveragePosition, ref Vector2 averageDirection, ref int boidsInVisibalDistance)
+        {
+            Vector2 centerVec = new Vector2(0, 0);
+            Vector2 toOtherBoid = new Vector2(0, 0);
 
+            //neighboorhood
+            for (int i = 0; i < boids.Length; i++)
+            {
+                if(boids[i] != this)
+                {
+                    Vector2 boidVec = boids[i].pos[0] - pos[0];
+                    if ((boidVec.Length() < visibalDistance))
+                    {
+                        //calculate avg data for Alignment and Cohation
+                        newAveragePosition += boids[i].pos[0];
+                        averageDirection += boids[i].dir;
+
+                        boidsInVisibalDistance++;
+                    }
+                }
+
+            }
+            this.vAlign = averageDirection / boidsInVisibalDistance;
+        }
+
+        private void calcCohesion(Boid[] boids, float keepDistance, float visibalDistance, int boidsInVisibalDistance, Vector2 newAveragePosition)
+        {
             //Adjust boid to follow the flocks average position, cohation 
-
             if (boidsInVisibalDistance > 0)
             {
                 if (newAveragePosition != pos[0])
                 {
                     newAveragePosition /= (boidsInVisibalDistance);
-                    
+
                     Vector2 dirToCenter = newAveragePosition - pos[0];
 
                     //Vector2 dirToCenter = pos[0] -newAveragePosition;
 
-                    //this.vCoha = dirToCenter / dirToCenter.Length();
-                    dir += (dirToCenter / dirToCenter.Length());
-                }
-
-                //Adjust the moving direction according to the flocks average direction, Alignment
-                if (averageDirection != dir)
-                {
-                    averageDirection /= boidsInVisibalDistance;
-
-                    dir += averageDirection;
-                    //this.alignVec = averageDirection;
+                    //dir += (dirToCenter / dirToCenter.Length());
+                    this.vCohe = (dirToCenter / dirToCenter.Length());
                 }
             }
         }
@@ -186,8 +219,8 @@ namespace BoidTest
                     if(FoodVec.Length() > 0.1)
                     {
                         FoodVec /= FoodVec.Length();
-                        this.dir += FoodVec * 0.2f;
-                        //this.foodVec = FoodVec * 0.2f;
+                        //this.dir += FoodVec * 0.2f;
+                        this.vFeed = FoodVec;
                     }
 
                 }
@@ -221,9 +254,7 @@ namespace BoidTest
                         Vector2 addVec = new Vector2(0, 0);
 
                         float third = 1 - (ObstVec.Length() / obst[i].GetInfluenceRange());
-                        addVec = ObstVec / ObstVec.Length();
                         this.dir -= 2*addVec;
-
                     }
                 }
             }
