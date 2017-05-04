@@ -37,7 +37,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 50;
+        int amountOfFish = 3;
         Boid[] boids;
 
         List<Feed> feed;
@@ -87,10 +87,16 @@ namespace BoidTest
             this.font = Content.Load<BitmapFont>("BIG");
 
             Vector2 startPos = new Vector2(100, 100);
-            for (int n = 0; n < amountOfFish; n++)
-            {
-                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X, startPos.Y), randum);
-            }
+
+            //for (int n = 0; n < amountOfFish; n++)
+            //{
+            //    boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X, startPos.Y), randum);
+            //}
+            this.boids[0] = new Boid(Content, windowSize, new Vector2(100, 135), randum);
+            this.boids[1] = new Boid(Content, windowSize, new Vector2(125, 85), randum);
+            this.boids[2] = new Boid(Content, windowSize, new Vector2(150, 140), randum);
+
+
 
             sets = new VariableSet[]
             {
@@ -176,7 +182,6 @@ namespace BoidTest
                 for (int n = 0; n < boids.Length; n++)
                 {
                     boids[n].Update(this.boids, this.feed, this.obst, gameTime, loopAround, keepDistance, visibalDistance);
-
                 }
 
 

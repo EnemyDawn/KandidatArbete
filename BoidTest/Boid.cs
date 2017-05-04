@@ -52,6 +52,7 @@ namespace BoidTest
 
             pos[0] = posIn;// new Vector2(randum.Next(100, 120),randum.Next(100, 120));
             dir.Normalize();
+
             for (int n = 1; n < pos.Length; n++)
             {
                 pos[n] = pos[0];// + (dir * (1 * n));
@@ -73,39 +74,34 @@ namespace BoidTest
             int visibleBoids = 0;
 
 
-            this.FollowingFeed(feeds, 2000);
-
-            Vector2 temp = new Vector2(1, 1);
+            //this.FollowingFeed(feeds, 2000);
 
             this.calcSeparation(boids, keepDistance, viewDistance);
 
             //inte säker på att denna fungerar
-            this.calcAvg(boids, keepDistance, viewDistance, ref avgPos, ref avgDir, ref visibleBoids);
+            //this.calcAvg(boids, keepDistance, viewDistance, ref avgPos, ref avgDir, ref visibleBoids);
 
-            this.calcCohesion(boids, keepDistance, viewDistance, visibleBoids, avgPos);
-
+            //this.calcCohesion(boids, keepDistance, viewDistance, visibleBoids, avgPos);
             
-
-            //this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
-
-            //this is an extention of the boid, which makes the fish attracted to
-            //to a point in the game, called a feed
             
             //this.avoidingObst(obst);
             //this.AvoidEnemyBoids(obst);
 
 
             //simple function that moves the boids back to the screen
-            this.ReinitializeBoidPosition(loopAround);
+            //this.ReinitializeBoidPosition(loopAround);
 
             //the direction should be normailized to maintain speed reliability
 
-            dir += this.vSep;// + 0.2f* this.vAlign + 0.02f * this.vCohe + 0.2f * this.vFeed;
-            //dir += this.vAlign;
+            this.dir = this.vSep;// + 0.2f* this.vAlign + 0.02f * this.vCohe + 0.2f * this.vFeed;
 
-            dir.Normalize();
+            //dir += 0.2f * this.vAlign;
+            //dir += 0.2f * this.vCohe;
+            //dir += this.vFeed;
 
-            pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            this.dir.Normalize();
+
+            this.pos[0] += (dir * 10) * (float)gameTime.ElapsedGameTime.TotalSeconds;
             //pos[0] += (dir * speed) * (float)gameTime.ElapsedGameTime.TotalSeconds;
            
 
@@ -142,21 +138,29 @@ namespace BoidTest
         {
             for(int i = 0; i < boids.Length; i++)
             {
+                //boidVec is not working
                 if(boids[i] != this)
                 {
-                    Vector2 boidVec = boids[i].pos[0] - pos[0];
-                    if (boidVec.Length() < keepDistance)
+                    Vector2 boidVec = boids[i].pos[0] - this.pos[0];
+                    if (boidVec.Length() < visibalDistance)
                     {
-                        float mod = boidVec.Length() / keepDistance;
-                        mod -= 1;
+                        if (boidVec.Length() == 0)
+                        {
+                            this.vSep = new Vector2(-1, -1);
+                            this.pos[0].X += 2.0f;
+                            this.pos[0].Y += 2.0f;
+                        }
+                        else
+                        {
+                            float mod = boidVec.Length() / keepDistance;
+                            mod -= 1;
 
-                        this.vSep = mod * (boidVec / boidVec.Length());
-
-                        if (float.IsNaN(vSep.X))
-                            this.vSep = new Vector2(-1 + (i * 0.1f), 0);
-                        if (float.IsNaN(vSep.Y))
-                            this.vSep = new Vector2(0, -1 + (i * 0.1f));
-
+                            this.vSep = (mod * (boidVec / boidVec.Length()));
+                        }
+                    }
+                    else
+                    {
+                        this.vSep = new Vector2(0, 0);
                     }
                 }
               
@@ -216,10 +220,9 @@ namespace BoidTest
 
                 if (FoodVec.Length() < visibalDistance)
                 {
-                    if(FoodVec.Length() > 0.1)
+                    if((FoodVec.Length()) > 0.1)
                     {
                         FoodVec /= FoodVec.Length();
-                        //this.dir += FoodVec * 0.2f;
                         this.vFeed = FoodVec;
                     }
 
