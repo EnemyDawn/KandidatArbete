@@ -46,7 +46,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 66;
+        int amountOfFish = 5;
         Boid[] boids;
 
         List<Feed> feed;
@@ -57,7 +57,7 @@ namespace BoidTest
 
         TestPart testPart;
 
-        Vector2 windowSize = new Vector2(1920, 900);
+        Vector2 windowSize = new Vector2(1280, 720);
         //Vector2 windowSize = new Vector2(200, 200);
 
         BitmapFont font;
@@ -106,7 +106,7 @@ namespace BoidTest
 
             this.font = Content.Load<BitmapFont>("BIG");
 
-            Vector2 startPos = new Vector2(100, 100);
+            Vector2 startPos = new Vector2(200, 200);
             for (int n = 0; n < amountOfFish; n++)
             {
                 boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X, startPos.Y), randum);
@@ -115,14 +115,10 @@ namespace BoidTest
             sets = new VariableSet[]
             {
                 new VariableSet(20,200),
-                //new VariableSet(30,200),
-                //new VariableSet(40,200),
-                //new VariableSet(50,200),
-                //new VariableSet(60,200),
-                //new VariableSet(70,200),
-                //new VariableSet(80,200),
-                //new VariableSet(90,200),
-                //new VariableSet(100,200),
+                new VariableSet(40,200),
+                new VariableSet(60,200),
+                new VariableSet(80,200),
+                new VariableSet(100,200),
 
                 //new VariableSet(40,100),
                 //new VariableSet(40,90),
@@ -210,6 +206,8 @@ namespace BoidTest
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Enter) && lastState != Keyboard.GetState())
                 {
+                    resultString += "Freeform KeepDistance: "+ keepDistance +"\n";
+                    resultString += "Freeform ViewDistance: " + visibalDistance + "\n";
                     testPart = TestPart.testDone;
                 }
 
@@ -336,7 +334,7 @@ namespace BoidTest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.PaleVioletRed);
+            GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
             #region FreeMode
             if (testPart == TestPart.freeMode)

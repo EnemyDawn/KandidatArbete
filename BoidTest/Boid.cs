@@ -52,7 +52,7 @@ namespace BoidTest
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
 
-            this.FollowingFeed(feeds, 1000);
+            this.FollowingFeed(feeds, 1600);
 
             this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
 

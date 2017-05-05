@@ -37,15 +37,15 @@ namespace BoidTest
            if(Keyboard.GetState().IsKeyDown(Keys.Space) && !active)
             {
                 active = true;
-                pos = new Vector2(800, 800);
+                pos = new Vector2(1000, 500);
             }
 
            if(active)
             {
-                Vector2 dir = (new Vector2(100, 100) - pos);// * 3;
+                Vector2 dir = (new Vector2(200, 200) - pos);// * 3;
                 dir.Normalize();
                 pos += dir * 4;
-                if ((new Vector2(100, 100) - pos).Length() <10)
+                if ((new Vector2(200, 200) - pos).Length() <10)
                     active = false;
             }
 

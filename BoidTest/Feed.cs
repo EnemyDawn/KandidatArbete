@@ -33,11 +33,11 @@ namespace BoidTest
         {
             if(target == 0)
             {
-                this.pos = new Vector2(100, 100);
+                this.pos = new Vector2(200, 200);
             }
             else
             {
-                this.pos = new Vector2(800, 800);
+                this.pos = new Vector2(1000, 500);
             }
             countDown -= gameTime.ElapsedGameTime.TotalSeconds;
             if(countDown<0)
