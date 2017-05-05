@@ -74,6 +74,7 @@ namespace BoidTest
         string introText;
 
         bool[] donepart;
+        bool showStats;
 
         public Game1()
         {
@@ -89,6 +90,7 @@ namespace BoidTest
         {
             // TODO: Add your initialization logic here
             Random randum = new Random();
+            this.showStats = false;
 
             testPart = TestPart.freeMode;
 
@@ -189,6 +191,11 @@ namespace BoidTest
                         currentSet++;
                     SetCurrentSet();
                 }
+                if(Keyboard.GetState().IsKeyDown(Keys.Tab) && lastState != Keyboard.GetState())
+                {
+                    this.showStats = !this.showStats;
+                }
+
 
                 // TODO: Add your update logic here
 
@@ -351,9 +358,14 @@ namespace BoidTest
                     boids[n].Draw(spriteBatch);
                 }
 
-                spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
-                spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-                spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+                if(this.showStats == true)
+                {
+                    spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
+                    spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+                    spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+                }
+
+
             }
             #endregion
             else if (testPart == TestPart.intro)
@@ -402,6 +414,8 @@ namespace BoidTest
 
                 compareVid.Draw(spriteBatch);
             }
+
+
 
             spriteBatch.End();
 
