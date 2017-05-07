@@ -46,7 +46,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 5;
+        int amountOfFish = 100;
         Boid[] boids;
 
         List<Feed> feed;
@@ -57,7 +57,7 @@ namespace BoidTest
 
         TestPart testPart;
 
-        Vector2 windowSize = new Vector2(1280, 720);
+        Vector2 windowSize = new Vector2(1920, 1080);
         //Vector2 windowSize = new Vector2(200, 200);
 
         BitmapFont font;
@@ -84,17 +84,18 @@ namespace BoidTest
             graphics.PreferredBackBufferHeight = (int)windowSize.Y;
 
             IsMouseVisible = true;
+           
         }
 
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            Random randum = new Random();
-            this.showStats = false;
+            
+            this.showStats = true;
 
-            testPart = TestPart.freeMode;
+            testPart = TestPart.intro;
 
-            boids = new Boid[amountOfFish];
+            LoadBoids();
 
             this.feed = new List<Feed>();
             this.obst = new List<Obst>();
@@ -108,12 +109,7 @@ namespace BoidTest
 
             this.font = Content.Load<BitmapFont>("BIG");
 
-            Vector2 startPos = new Vector2(200, 200);
-            for (int n = 0; n < amountOfFish; n++)
-            {
-                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X, startPos.Y), randum);
-            }
-
+            
             sets = new VariableSet[]
             {
                 new VariableSet(20,200),
@@ -122,17 +118,14 @@ namespace BoidTest
                 new VariableSet(80,200),
                 new VariableSet(100,200),
 
-                //new VariableSet(40,100),
-                //new VariableSet(40,90),
-                //new VariableSet(40,80),
-                //new VariableSet(40,70),
-                //new VariableSet(40,60),
-                //new VariableSet(40,52),
+                new VariableSet(40,100),
+                new VariableSet(40,70),
+                new VariableSet(40,50),
             };
 
             introText = "In this case study we study the boid algorithm and try to make is as \nrealistic as possible."+
                         "In this form you will \nbe shown multiple instances of a flock and at the same time \n" +
-                        "choose witch one of the videos you find the most realistic.\n" +
+                        "choose wich one of the videos you find the most realistic.\n" +
                         "Please understand that you can quit the test at anytime if you wish,\nif so; no personal data will be saved.\n" +
 
                        "Thank you for taking the time to participate in this study.\n" +
@@ -191,7 +184,19 @@ namespace BoidTest
                         currentSet++;
                     SetCurrentSet();
                 }
-                if(Keyboard.GetState().IsKeyDown(Keys.Tab) && lastState != Keyboard.GetState())
+
+                //if (Keyboard.GetState().IsKeyDown(Keys.N) && amountOfFish > 2)
+                //    amountOfFish--;
+                   
+                //if (Keyboard.GetState().IsKeyDown(Keys.M) && amountOfFish < 500)
+                //    amountOfFish++;
+
+                //if(Keyboard.GetState().IsKeyDown(Keys.R))
+                //    LoadBoids();
+
+
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Tab) && lastState != Keyboard.GetState())
                 {
                     this.showStats = !this.showStats;
                 }
@@ -233,11 +238,9 @@ namespace BoidTest
                     //CHANGE THIS LATER
                     string[] ds = new string[]
                     {
-                    "Boids50Sep\\CS_20.Wmv",
-                    "Boids50Sep\\CS_40.Wmv",
-                    "Boids50Sep\\CS_60.Wmv",
-                    "Boids50Sep\\CS_80.Wmv",
-                    "Boids50Sep\\CS_100.Wmv",
+                    "Boids5Coh\\5coh50.Wmv",
+                    "Boids5Coh\\5coh70.Wmv",
+                    "Boids5Coh\\5coh100.Wmv",
                     };
                     compareVid = new CompareVid(this, ds);
                 }
@@ -266,11 +269,9 @@ namespace BoidTest
                     //CHANGE THIS LATER
                     string[] ds = new string[]
                     {
-                    "Boids50Sep\\CS_20.Wmv",
-                    "Boids50Sep\\CS_40.Wmv",
-                    "Boids50Sep\\CS_60.Wmv",
-                    "Boids50Sep\\CS_80.Wmv",
-                    "Boids50Sep\\CS_100.Wmv",
+                    "Boids50Coh\\50coh50.Wmv",
+                    "Boids50Coh\\50coh70.Wmv",
+                    "Boids50Coh\\50coh100.Wmv",
                     };
                     compareVid = new CompareVid(this, ds);
                 }
@@ -300,11 +301,9 @@ namespace BoidTest
                     //CHANGE THIS LATER
                     string[] ds = new string[]
                     {
-                    "Boids50Sep\\CS_20.Wmv",
-                    "Boids50Sep\\CS_40.Wmv",
-                    "Boids50Sep\\CS_60.Wmv",
-                    "Boids50Sep\\CS_80.Wmv",
-                    "Boids50Sep\\CS_100.Wmv",
+                    "Boids100Coh\\100coh50.Wmv",
+                    "Boids100Coh\\100coh70.Wmv",
+                    "Boids100Coh\\100coh100.Wmv",
                     };
                     compareVid = new CompareVid(this, ds);
                 }
@@ -360,9 +359,12 @@ namespace BoidTest
 
                 if(this.showStats == true)
                 {
-                    spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
-                    spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-                    spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+                    spriteBatch.DrawString(font, "KeepDistance:" + keepDistance + " Y- U+", new Vector2(0, 0), Color.White);
+                    spriteBatch.DrawString(font, "ViewDistance: " + visibalDistance + " H- J+", new Vector2(0, 60), Color.White);
+                    spriteBatch.DrawString(font, "Current Set:" + currentSet + " O- P+", new Vector2(0, 120), Color.White);
+                    //spriteBatch.DrawString(font, "Fish Amount:" + amountOfFish + " N- M+", new Vector2(0, 300), Color.White);
+                    
+                    spriteBatch.DrawString(font, "Hide text with Tab", new Vector2(0, 180), Color.White);
                 }
 
 
@@ -458,9 +460,9 @@ namespace BoidTest
                 ////////////CHANGE
                 string[] ds = new string[]
                 {
-                    "Boids50Sep\\CS_40.Wmv",
-                    "Boids50Sep\\CS_40.Wmv",
-                    "Boids100Sep\\CS_40.Wmv",
+                    "Boids5Sep\\5sep60.Wmv",
+                    "Boids50Sep\\50sep60.Wmv",
+                    "Boids100Sep\\100sep60.Wmv",
                 };
                 compareVid = new CompareVid(this, ds);
 
@@ -482,11 +484,11 @@ namespace BoidTest
                 ////////////CHANGE
                 string[] ds = new string[]
                 {
-                    "Boids50Sep\\CS_20.Wmv",
-                    "Boids50Sep\\CS_40.Wmv",
-                    "Boids50Sep\\CS_60.Wmv",
-                    "Boids50Sep\\CS_80.Wmv",
-                    "Boids50Sep\\CS_100.Wmv",
+                    "Boids5Sep\\5sep20.Wmv",
+                    "Boids5Sep\\5sep40.Wmv",
+                    "Boids5Sep\\5sep60.Wmv",
+                    "Boids5Sep\\5sep80.Wmv",
+                    "Boids5Sep\\5sep100.Wmv",
                 };
                 compareVid = new CompareVid(this, ds);
             }
@@ -497,11 +499,11 @@ namespace BoidTest
                 resultString += "Test Seperation 50 boids: ";
                 string[] ds = new string[]
                 {
-                    "Boids50Sep\\CS_20.Wmv",
-                    "Boids50Sep\\CS_40.Wmv",
-                    "Boids50Sep\\CS_60.Wmv",
-                    "Boids50Sep\\CS_80.Wmv",
-                    "Boids50Sep\\CS_100.Wmv",
+                    "Boids50Sep\\50sep20.Wmv",
+                    "Boids50Sep\\50sep40.Wmv",
+                    "Boids50Sep\\50sep60.Wmv",
+                    "Boids50Sep\\50sep80.Wmv",
+                    "Boids50Sep\\50sep100.Wmv",
                 };
                 compareVid = new CompareVid(this, ds);
 
@@ -513,11 +515,11 @@ namespace BoidTest
                 resultString += "Test Seperation 100 boids: ";
                 string[] ds = new string[]
                 {
-                    "Boids100Sep\\CS_20.Wmv",
-                    "Boids100Sep\\CS_40.Wmv",
-                    "Boids100Sep\\CS_60.Wmv",
-                    "Boids100Sep\\CS_80.Wmv",
-                    "Boids100Sep\\CS_100.Wmv",
+                    "Boids100Sep\\100sep20.Wmv",
+                    "Boids100Sep\\100sep40.Wmv",
+                    "Boids100Sep\\100sep60.Wmv",
+                    "Boids100Sep\\100sep80.Wmv",
+                    "Boids100Sep\\100sep100.Wmv",
                 };
                 compareVid = new CompareVid(this, ds);
             }
@@ -536,6 +538,19 @@ namespace BoidTest
             keepDistance = sets[currentSet].keepDistance;
             visibalDistance = sets[currentSet].visibalDistance;
             Console.WriteLine("Visiable" + sets[currentSet].visibalDistance);
+        }
+
+        private void LoadBoids()
+        {
+            Random randum = new Random();
+
+            boids = new Boid[amountOfFish];
+
+            Vector2 startPos = new Vector2(200, 200);
+            for (int n = 0; n < amountOfFish; n++)
+            {
+                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X, startPos.Y), randum);
+            }
         }
     }
 }

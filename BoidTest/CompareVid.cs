@@ -30,7 +30,7 @@ namespace BoidTest
 
             windowSize = new Vector2(game.GraphicsDevice.Viewport.Width, game.GraphicsDevice.Viewport.Height);
 
-            videoFrame = new Vector2(windowSize.X / 2.6f, windowSize.Y / 2.6f);
+            videoFrame = new Vector2(windowSize.X / 2.8f, windowSize.Y / 2.6f);
             renderScreens = new Rectangle[inNames.Length];
 
             for (int i = 0;i< inNames.Length;i++)
