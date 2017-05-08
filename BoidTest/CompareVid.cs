@@ -36,14 +36,18 @@ namespace BoidTest
             for (int i = 0;i< inNames.Length;i++)
             {
                 videos[i] = new NewVideoPlayer(inNames[i], game.GraphicsDevice);
-                videos[i].CurrentState = VideoState.Playing;
+                
                 if (videos[i].MillisecondsPerFrame != -1)
                     game.TargetElapsedTime = TimeSpan.FromMilliseconds(videos[i].MillisecondsPerFrame);
 
                 renderScreens[i] = new Rectangle((((int)videoFrame.X+5) * i % (int)windowSize.X),100+ ((int)videoFrame.Y+5) * (((int)videoFrame.X * i) / (int)windowSize.X), (int)videoFrame.X, (int)videoFrame.Y);
             };
 
-            
+            for (int i = 0; i < inNames.Length; i++)
+            {
+                videos[i].CurrentState = VideoState.Playing;
+            };
+
         }
 
         public void Unload()
@@ -83,16 +87,23 @@ namespace BoidTest
 
         public void Draw(SpriteBatch batch)
         {
+            bool shouldRewind = true;
             for (int i = 0; i < videos.Length; i++)
             {
                 videos[i].Update();
 
-                if (videos[i].Duration - 1.2 <= videos[i].CurrentPosition)
+                if (videos[i].Duration > videos[i].CurrentPosition)
                 {
-                    videos[i].Rewind();
+                    shouldRewind = false;
                 }
 
                 batch.Draw(videos[i].OutputFrame, renderScreens[i], Color.White);
+            }
+
+            if(shouldRewind)
+            {
+                for (int i = 0; i < videos.Length; i++)
+                    videos[i].Rewind();
             }
         }
     }
