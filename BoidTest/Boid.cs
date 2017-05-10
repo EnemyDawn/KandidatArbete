@@ -52,7 +52,7 @@ namespace BoidTest
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
 
-            this.FollowingFeed(feeds, 1600);
+           // this.FollowingFeed(feeds, 1600);
 
             this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
 
@@ -109,8 +109,18 @@ namespace BoidTest
                 {
                     if (boids[n] != this)
                     {
-                        Vector2 boidVec = (boids[n].pos[0] - pos[0]);
-                        if (boidVec.Length() < keepDistance)
+                    Vector2 boidVec = (boids[n].pos[0] - pos[0]);
+                    if ((boidVec.Length() < visibalDistance))
+                    {
+                        //calculate avg data for Alignment and Cohation
+                        newAveragePosition += boids[n].pos[0];
+
+                        averageDirection += boids[n].dir;
+
+                        boidsInVisibalDistance++;
+
+                    }
+                    if (boidVec.Length() < keepDistance)
                         {
                             //Separation, the closer to a flockmate, the more they are repelled
                             boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
@@ -123,16 +133,7 @@ namespace BoidTest
                             averageSepForce += boidVec;// * cordilate;
                             boidsKeepDistance++;
                         }
-                        if ((boidVec.Length() < visibalDistance))
-                        {
-                            //calculate avg data for Alignment and Cohation
-                            newAveragePosition += boids[n].pos[0];
-
-                            averageDirection += boids[n].dir;
-
-                            boidsInVisibalDistance++;
-                           
-                        }
+                        
                     }
                 }
             
