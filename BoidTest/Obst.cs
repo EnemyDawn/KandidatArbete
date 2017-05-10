@@ -18,7 +18,7 @@ namespace BoidTest
 
         float influenceRadius;
 
-        public bool active = false;
+        public bool active = true;
 
         public Obst(ContentManager content, Vector2 pos)
         {
@@ -34,21 +34,7 @@ namespace BoidTest
 
         public void Update()
         {
-           if(Keyboard.GetState().IsKeyDown(Keys.Space) && !active)
-            {
-                active = true;
-                pos = new Vector2(800, 800);
-            }
-
-           if(active)
-            {
-                Vector2 dir = (new Vector2(100, 100) - pos);// * 3;
-                dir.Normalize();
-                pos += dir * 4;
-                if ((new Vector2(100, 100) - pos).Length() <10)
-                    active = false;
-            }
-
+            pos = new Vector2(Mouse.GetState().X,Mouse.GetState().Y);
         }
 
         public void Draw(SpriteBatch spriteBatch)

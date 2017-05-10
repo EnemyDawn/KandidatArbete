@@ -46,7 +46,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 2;
+        int amountOfFish = 1;
         Boid[] boids;
 
         List<Feed> feed;
@@ -64,7 +64,7 @@ namespace BoidTest
         bool loopAround = false;
 
         public float keepDistance = 50;
-        public float visibalDistance = 140;
+        public float visibalDistance = 60;
 
         KeyboardState lastState;
 
@@ -109,7 +109,7 @@ namespace BoidTest
             Vector2 startPos = new Vector2(100, 100);
             for (int n = 0; n < amountOfFish; n++)
             {
-                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X + (n*10), startPos.Y + (n * 12)), randum);
+                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X , startPos.Y ), randum);
             }
 
             sets = new VariableSet[]

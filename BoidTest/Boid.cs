@@ -26,6 +26,8 @@ namespace BoidTest
         Vector2 windowSize;
         Color color;
 
+        float roationInc = 0.01f;
+
         public Boid(ContentManager content,Vector2 windowSize,Vector2 posIn,Random randum)
         {
             this.windowSize = windowSize;
@@ -61,6 +63,9 @@ namespace BoidTest
             //this function satisfy the separation, alignment and cohation roles
             //with is the rules of the boid algorithm
 
+            if (Keyboard.GetState().IsKeyDown(Keys.T))
+                roationInc += 0.1f;
+
             this.FollowingFeed(feeds, 1000);
 
             this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
@@ -88,28 +93,33 @@ namespace BoidTest
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            float rotation = (float)(Math.Atan2(-dir.Y, dir.X));// / (2 * Math.PI));
+            float rotation = (float)(Math.Atan2(dir.Y, dir.X));// / (2 * Math.PI));
             Vector2 rotToFront = new Vector2();
             int countDown = 50;
+            Vector2 savePos = pos[1];
 
             for (int n = fishTex.Length - 1; n >= 1; n--)
             {
                 rotToFront = pos[countDown - 10] -pos[countDown];
                 //rotToFront.Normalize();
                 
-                rotation = (float)(Math.Atan2(-rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
+                rotation = (float)(Math.Atan2(rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
 
-                spriteBatch.Draw(fishTex[n], pos[countDown], new Rectangle(0, 0, fishTex[n].Width, fishTex[n].Height), new Color(color.R + (n * 2), color.G + (n * 2), color.B + (n * 2)),
+                rotation += MathHelper.ToRadians(-90);
+
+                spriteBatch.Draw(fishTex[n], savePos - (rotToFront * 1), new Rectangle(0, 0, fishTex[n].Width, fishTex[n].Height), new Color(color.R + (n * 2), color.G + (n * 2), color.B + (n * 2)),
                     rotation,
                     new Vector2(fishTex[n].Width / 2, (fishTex[n].Height)),
                     size,
                     SpriteEffects.None, 1
                     );
+                savePos = pos[countDown];
 
                 countDown -= 10;
             }
             rotToFront = pos[0] - pos[10];
-            rotation = (float)(Math.Atan2(-rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
+            rotation = (float)(Math.Atan2(rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
+            rotation += MathHelper.ToRadians(-90);
 
             spriteBatch.Draw(fishTex[0], pos[1], new Rectangle(0, 0, fishTex[0].Width, fishTex[0].Height), new Color(color.R + (0 * 2), color.G + (0 * 2), color.B + (0 * 2)),
                     rotation,
@@ -128,35 +138,36 @@ namespace BoidTest
             int boidsKeepDistance = 0;
 
             for (int n = 0; n < boids.Length; n++)
+            {
+                if (boids[n] != this)
                 {
-                    if (boids[n] != this)
+                    Vector2 boidVec = (boids[n].pos[0] - pos[0]);
+                    if ((boidVec.Length() < visibalDistance))
                     {
-                        Vector2 boidVec = (boids[n].pos[0] - pos[0]);
-                        if (boidVec.Length() < keepDistance)
-                        {
-                            //Separation, the closer to a flockmate, the more they are repelled
-                            boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+                        //calculate avg data for Alignment and Cohation
+                        newAveragePosition += boids[n].pos[0];
 
-                            if (float.IsNaN(boidVec.X))
-                                boidVec = new Vector2(-1+(n*0.1f), 0);
-                            if (float.IsNaN(boidVec.Y))
-                                boidVec = new Vector2(0, -1 + (n * 0.1f));
+                        averageDirection += boids[n].dir;
 
-                            averageSepForce += boidVec;// * cordilate;
-                            boidsKeepDistance++;
-                        }
-                        if ((boidVec.Length() < visibalDistance))
-                        {
-                            //calculate avg data for Alignment and Cohation
-                            newAveragePosition += boids[n].pos[0];
+                        boidsInVisibalDistance++;
 
-                            averageDirection += boids[n].dir;
-
-                            boidsInVisibalDistance++;
-                           
-                        }
                     }
+                    if (boidVec.Length() < keepDistance)
+                    {
+                        //Separation, the closer to a flockmate, the more they are repelled
+                        boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
+
+                        if (float.IsNaN(boidVec.X))
+                            boidVec = new Vector2(-1 + (n * 0.1f), 0);
+                        if (float.IsNaN(boidVec.Y))
+                            boidVec = new Vector2(0, -1 + (n * 0.1f));
+
+                        averageSepForce += boidVec;// * cordilate;
+                        boidsKeepDistance++;
+                    }
+
                 }
+            }
             
 
 
