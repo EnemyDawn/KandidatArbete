@@ -23,6 +23,7 @@ namespace BoidTest
         Vector2 pos;
         Vector2 dir;
         Vector2[] dirArr;
+        float[] distanceArr;
 
         Vector2 windowSize;
         Color color;
@@ -57,7 +58,18 @@ namespace BoidTest
                 content.Load<Texture2D>("Fish\\b4"),
                 content.Load<Texture2D>("Fish\\tail"),
             };
-                
+
+            distanceArr = new float[6]
+            {
+                20,
+                14,
+                11,
+                20,
+                26,
+                20
+            };
+
+
         }
 
         public void Update(Boid[] boids, List<Feed> feeds, List<Obst> obst,GameTime gameTime,bool loopAround,float keepDistance,float viewDistance)
@@ -68,7 +80,10 @@ namespace BoidTest
             if (Keyboard.GetState().IsKeyDown(Keys.T))
                 roationInc += 0.1f;
 
-            this.FollowingFeed(feeds, 1000);
+            keepDistance = ((fishTex[0].Width * size) / 16) * keepDistance;
+            viewDistance = ((fishTex[0].Width * size) / 16) * viewDistance;
+
+           // this.FollowingFeed(feeds, 1000);
 
             this.BoidsFirstRules(boids, false, keepDistance, viewDistance);
 
@@ -99,7 +114,7 @@ namespace BoidTest
             Vector2 rotToFront = new Vector2();
             int countDown = 0;
             Vector2 lastPos = pos;
-            float distance = 22;
+            float distance = 0;
             for (int n = 0; n < fishTex.Length; n++)
             {
                 rotToFront = dirArr[countDown];
@@ -108,28 +123,19 @@ namespace BoidTest
                 rotation = (float)(Math.Atan2(rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
 
                 rotation += MathHelper.ToRadians(-90);
-                
-                spriteBatch.Draw(fishTex[n], lastPos - (dirArr[countDown] * distance), new Rectangle(0, 0, fishTex[n].Width, fishTex[n].Height), new Color(color.R + (n * 2), color.G + (n * 2), color.B + (n * 2)),
+                spriteBatch.Draw(fishTex[n], lastPos, new Rectangle(0, 0, fishTex[n].Width, fishTex[n].Height), new Color(color.R + (n * 2), color.G + (n * 2), color.B + (n * 2)),
                     rotation,
                     new Vector2(fishTex[n].Width / 2, (fishTex[n].Height)),
                     size,
                     SpriteEffects.None, 1
                     );
-                lastPos = lastPos - (dirArr[countDown] * distance);
-                countDown += 3;
-                distance -= 2;
-            }
-            //// rotToFront = pos[0] - pos[10];
-            //rotToFront = dir;
-            //rotation = (float)(Math.Atan2(rotToFront.Y, rotToFront.X));// / (2 * Math.PI));
-            //rotation += MathHelper.ToRadians(-90);
 
-            //spriteBatch.Draw(fishTex[0], pos, new Rectangle(0, 0, fishTex[0].Width, fishTex[0].Height), new Color(color.R + (0 * 2), color.G + (0 * 2), color.B + (0 * 2)),
-            //        rotation,
-            //        new Vector2(fishTex[0].Width / 2, (fishTex[0].Height)),
-            //        size,
-            //        SpriteEffects.None, 1
-            //        );
+
+
+                    lastPos = lastPos - (dirArr[countDown] * distanceArr[n]);
+                    countDown += 4;
+                    
+            }
         }
 
         private void BoidsFirstRules(Boid[] boids,bool loopAround,float keepDistance,float visibalDistance)
