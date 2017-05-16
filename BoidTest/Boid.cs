@@ -65,7 +65,7 @@ namespace BoidTest
                 14,
                 11,
                 20,
-                26,
+                21,
                 20
             };
 
@@ -140,9 +140,9 @@ namespace BoidTest
 
         private void BoidsFirstRules(Boid[] boids,bool loopAround,float keepDistance,float visibalDistance)
         {
-            Vector2 averageSepForce = new Vector2(0.0f, 0.0f);
-            Vector2 newAveragePosition = new Vector2(0.0f, 0.0f);
-            Vector2 averageDirection = new Vector2(0.0f, 0.0f);
+            Vector2 averageSepForce = Vector2.Zero;
+            Vector2 newAveragePosition = Vector2.Zero;
+            Vector2 averageDirection = Vector2.Zero;
             int boidsInVisibalDistance = 0;
             int boidsKeepDistance = 0;
 
@@ -167,9 +167,9 @@ namespace BoidTest
                         boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
 
                         if (float.IsNaN(boidVec.X))
-                            boidVec = new Vector2(-1 + (n * 0.1f), 0);
+                            boidVec = new Vector2(-1 + ((n+4) * 0.1f), 0);
                         if (float.IsNaN(boidVec.Y))
-                            boidVec = new Vector2(0, -1 + (n * 0.1f));
+                            boidVec = new Vector2(0, -1 + ((n+2) * 0.1f));
 
                         averageSepForce += boidVec;// * cordilate;
                         boidsKeepDistance++;
@@ -184,12 +184,15 @@ namespace BoidTest
 
             if (boidsInVisibalDistance > 0)
             {
+                newAveragePosition += pos;
+                boidsInVisibalDistance++;
                 newAveragePosition /= boidsInVisibalDistance;
                 if (newAveragePosition != pos)
                 {
                     
                     Vector2 dirToCenter = newAveragePosition - pos;
-                    dir += dirToCenter / dirToCenter.Length();
+                    dirToCenter = dirToCenter / dirToCenter.Length();
+                    dir += dirToCenter;
 
                 }
 
@@ -201,10 +204,11 @@ namespace BoidTest
                     dir += averageDirection;
                 }
 
-
-                    //averageSepForce /= boidsInVisibalDistance;
+                if (boidsKeepDistance > 0)
+                {
+                     //averageSepForce /= boidsKeepDistance;
                     dir += averageSepForce;
-
+                }
             }
         }
 
@@ -270,19 +274,19 @@ namespace BoidTest
                 Vector2 OtherVec = this.pos - obst[i].GetPos();
                 if(OtherVec.Length() < obst[i].GetInfluenceRange() && obst[i].active)
                 {
-                    float constant = (OtherVec.Length() / obst[i].GetInfluenceRange()) * -1.0f;
-                    v = OtherVec / OtherVec.Length();
-                    v = v * constant;
+                    //float constant = (OtherVec.Length() / obst[i].GetInfluenceRange()) * -1.0f;
+                    //v = OtherVec / OtherVec.Length();
+                    //v = v * constant;
 
-                    float w = 2.0f;
+                    //float w = 2.0f;
 
-                    float speedMod = OtherVec.Length() / obst[i].GetInfluenceRange();
+                    //float speedMod = OtherVec.Length() / obst[i].GetInfluenceRange();
 
-                    this.speed = this.speed * (1+speedMod);
-                    if (250 < this.speed)
-                        this.speed = 250;
+                    //this.speed = this.speed * (1+speedMod);
+                    //if (250 < this.speed)
+                    //    this.speed = 250;
 
-                    this.dir -=  w*v;
+                    //this.dir -=  w*v;
                 }
                 else
                 {

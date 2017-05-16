@@ -46,7 +46,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 50;
+        int amountOfFish = 2;
         Boid[] boids;
 
         List<Feed> feed;
