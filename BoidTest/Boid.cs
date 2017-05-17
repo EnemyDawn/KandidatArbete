@@ -35,7 +35,7 @@ namespace BoidTest
             this.windowSize = windowSize;
 
             //apply random postitions in the game
-            speed = randum.Next(50,230);
+            //speed = randum.Next(50,230);
             dir = new Vector2(1,1);
             pos = posIn;// new Vector2(randum.Next(100, 120),randum.Next(100, 120));
             dir.Normalize();
@@ -89,10 +89,10 @@ namespace BoidTest
 
             //this is an extention of the boid, which makes the fish attracted to
             //to a point in the game, called a feed
-            
-            //this.avoidingObst(obst);
-            this.AvoidEnemyBoids(obst);
 
+            //this.avoidingObst(obst);
+            //this.AvoidEnemyBoids(obst);
+            this.NewAvoidEnemy(obst);
 
             //simple function that moves the boids back to the screen
             this.ReinitializeBoidPosition(loopAround);
@@ -146,6 +146,8 @@ namespace BoidTest
             int boidsInVisibalDistance = 0;
             int boidsKeepDistance = 0;
 
+            float averageSpeed = speed;
+
             for (int n = 0; n < boids.Length; n++)
             {
                 if (boids[n] != this)
@@ -160,55 +162,65 @@ namespace BoidTest
 
                         boidsInVisibalDistance++;
 
+                        averageSpeed += boids[n].speed;
+
                     }
                     if (boidVec.Length() < keepDistance)
                     {
                         //Separation, the closer to a flockmate, the more they are repelled
                         boidVec = ((boidVec.Length() / keepDistance) - 1) * (boidVec / boidVec.Length());
 
-                        if (float.IsNaN(boidVec.X))
-                            boidVec = new Vector2(-1 + ((n+4) * 0.1f), 0);
-                        if (float.IsNaN(boidVec.Y))
-                            boidVec = new Vector2(0, -1 + ((n+2) * 0.1f));
-
                         averageSepForce += boidVec;// * cordilate;
                         boidsKeepDistance++;
+
+                        //Vector2 force = pos / boids[n].pos;
+                        //force *= (keepDistance- boidVec.Length());
+                        //averageSepForce += force;
+                        //boidsKeepDistance++;
                     }
 
                 }
             }
-            
 
+           // dir = Vector2.Zero;
 
             //Adjust boid to follow the flocks average position, cohation 
 
             if (boidsInVisibalDistance > 0)
             {
-                newAveragePosition += pos;
-                boidsInVisibalDistance++;
-                newAveragePosition /= boidsInVisibalDistance;
-                if (newAveragePosition != pos)
-                {
-                    
-                    Vector2 dirToCenter = newAveragePosition - pos;
-                    dirToCenter = dirToCenter / dirToCenter.Length();
-                    dir += dirToCenter;
-
-                }
-
                 //Adjust the moving direction according to the flocks average direction, Alignment
                 if (averageDirection != dir)
                 {
-                    averageDirection /= boidsInVisibalDistance;
 
+                    averageDirection /= boidsInVisibalDistance;
+                   // averageDirection = averageDirection / averageDirection.Length();
                     dir += averageDirection;
                 }
 
-                if (boidsKeepDistance > 0)
+                newAveragePosition /= boidsInVisibalDistance;
+
+                    Vector2 dirToCenter = newAveragePosition - pos;
+                if (dirToCenter.Length() > 7)
                 {
-                     //averageSepForce /= boidsKeepDistance;
-                    dir += averageSepForce;
+                    dirToCenter = dirToCenter / dirToCenter.Length();
+                    dir += dirToCenter;
+
+
+
+
+                    if (boidsKeepDistance > 0)
+                    {
+                        //  averageSepForce = averageSepForce / boidsKeepDistance;
+                        //  averageSepForce = averageSepForce / averageSepForce.Length();
+                        if(boidsKeepDistance == 1)
+                            dir += averageSepForce * (2);
+                        dir += averageSepForce * (1);
+                    }
+
+                   
                 }
+                 //averageSpeed /= boidsInVisibalDistance;
+                 //speed = averageSpeed;
             }
         }
 
@@ -272,25 +284,50 @@ namespace BoidTest
             for (int i = 0; i < obst.Count; i++)
             {
                 Vector2 OtherVec = this.pos - obst[i].GetPos();
-                if(OtherVec.Length() < obst[i].GetInfluenceRange() && obst[i].active)
+                if (OtherVec.Length() < obst[i].GetInfluenceRange() && obst[i].active)
                 {
-                    //float constant = (OtherVec.Length() / obst[i].GetInfluenceRange()) * -1.0f;
-                    //v = OtherVec / OtherVec.Length();
-                    //v = v * constant;
+                    float constant = (OtherVec.Length() / obst[i].GetInfluenceRange()) * -1.0f;
+                    v = OtherVec / OtherVec.Length();
+                    v = v * constant;
 
-                    //float w = 2.0f;
+                    float w = 2.0f;
 
-                    //float speedMod = OtherVec.Length() / obst[i].GetInfluenceRange();
+                    float speedMod = OtherVec.Length() / obst[i].GetInfluenceRange();
 
-                    //this.speed = this.speed * (1+speedMod);
-                    //if (250 < this.speed)
-                    //    this.speed = 250;
+                    this.speed = this.speed * (1 + speedMod);
+                    if (250 < this.speed)
+                        this.speed = 250;
 
-                    //this.dir -=  w*v;
+                    this.dir -= w * v;
                 }
                 else
                 {
                     this.speed = 100;
+                }
+            }
+        }
+
+        private void NewAvoidEnemy(List<Obst> obst)
+        {
+            Vector2 v = new Vector2(0, 0);
+            for (int i = 0; i < obst.Count; i++)
+            {
+                Vector2 OtherVec =obst[i].GetPos() - this.pos;
+                if (OtherVec.Length() < obst[i].GetInfluenceRange() && obst[i].active)
+                {
+                    OtherVec = ((OtherVec.Length() / obst[i].GetInfluenceRange()) - 1) * (OtherVec / OtherVec.Length());
+                    dir += OtherVec;
+
+                    float speedMod = OtherVec.Length() / obst[i].GetInfluenceRange();
+
+                    this.speed = this.speed * (9 + speedMod);
+                    if (330 < this.speed)
+                        this.speed = 330;
+                }
+                else
+                {
+                    if (speed > 100)
+                        speed = speed - 2;
                 }
             }
         }
@@ -317,19 +354,19 @@ namespace BoidTest
             else
             {
                 ///This if for when we do not want to loop the fish tank, we simply tell the boids to bound of the edges
-                if (pos.X > windowSize.X + (fishTex[0].Width * size))
+                if (pos.X > windowSize.X + 100)
                 {
                     dir = -dir;
                 }
-                if (pos.Y > windowSize.Y + (fishTex[0].Height * size))
+                if (pos.Y > windowSize.Y + 100)
                 {
                     dir = -dir;
                 }
-                if (pos.X < -(fishTex[0].Width * size))
+                if (pos.X < -100)
                 {
                     dir = -dir;
                 }
-                if (pos.Y < -(fishTex[0].Height * size))
+                if (pos.Y < -100)
                 {
                     dir = -dir;
                 }

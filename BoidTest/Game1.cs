@@ -46,7 +46,7 @@ namespace BoidTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        int amountOfFish = 2;
+        int amountOfFish = 50;
         Boid[] boids;
 
         List<Feed> feed;
@@ -57,7 +57,7 @@ namespace BoidTest
 
         TestPart testPart;
 
-        Vector2 windowSize = new Vector2(1920, 900);
+        Vector2 windowSize = new Vector2(800, 800);
         //Vector2 windowSize = new Vector2(200, 200);
 
         BitmapFont font;
@@ -109,7 +109,7 @@ namespace BoidTest
             Vector2 startPos = new Vector2(100, 100);
             for (int n = 0; n < amountOfFish; n++)
             {
-                boids[n] = new Boid(Content, windowSize, new Vector2(startPos.X , startPos.Y ), randum);
+                boids[n] = new Boid(Content, windowSize, new Vector2(randum.Next(0,200) , randum.Next(0,200) ), randum);
             }
 
             sets = new VariableSet[]
@@ -353,9 +353,9 @@ namespace BoidTest
                     boids[n].Draw(spriteBatch);
                 }
 
-                spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
-                spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
-                spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
+              // spriteBatch.DrawString(font, "KeepDistance:" + keepDistance, new Vector2(0, 0), Color.White);
+              // spriteBatch.DrawString(font, "ViewDistance:" + visibalDistance, new Vector2(0, 60), Color.White);
+              // spriteBatch.DrawString(font, "Current Set:" + currentSet, new Vector2(0, 120), Color.White);
             }
             #endregion
             else if (testPart == TestPart.intro)
